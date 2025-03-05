@@ -7,6 +7,9 @@ public class CharacterManager : MonoBehaviour
 {
     private static CharacterManager _instance;
 
+    public bool isJump;
+    public bool isWalk;
+
     public static CharacterManager Instance
     {
         get

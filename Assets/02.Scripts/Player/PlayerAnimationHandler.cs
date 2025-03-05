@@ -15,9 +15,6 @@ public class PlayerAnimationHandler : MonoBehaviour
     private int walk = Animator.StringToHash("isWalk");
     private int jump = Animator.StringToHash("Jump");
 
-    private bool iswalk;
-    private bool isjump;
-
     public AnimationState state;
 
     private void Start()
@@ -25,20 +22,22 @@ public class PlayerAnimationHandler : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
-    void SetAnimator(AnimationState state)
+    public void SetAnimator(AnimationState state)
     {
         switch (state) 
         {
-            case AnimationState.Idle:
-                iswalk = false;
-                break;
             case AnimationState.Jump:
-                isjump = true;
+                CharacterManager.Instance.isJump = false;
+                animator.SetTrigger(jump);
                 break;
-            case AnimationState.Walk: 
-                iswalk = true;
+            case AnimationState.Walk:
+                animator.SetBool(walk, CharacterManager.Instance.isWalk);
+                break;
+            default:
+                CharacterManager.Instance.isJump = false;
+                CharacterManager.Instance.isWalk = false;
+                animator.SetBool(walk, CharacterManager.Instance.isWalk);
                 break;
         }
-
     }
 }
