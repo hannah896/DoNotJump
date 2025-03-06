@@ -79,13 +79,13 @@ public class PlayerController : MonoBehaviour
         //¿òÁ÷ÀÌ´Â »óÅÂÀÏ ¶§
         if (context.phase == InputActionPhase.Performed)
         {
-            CharacterManager.Instance.isWalk = true;
+            CharacterManager.Instance.state = AnimationState.Walk;
             moveInput = context.ReadValue<Vector2>();
         }
         else if (context.phase == InputActionPhase.Canceled)
         {
             moveInput = Vector2.zero;
-            CharacterManager.Instance.isWalk = false;
+            CharacterManager.Instance.state = AnimationState.Idle;
         }
     }
 
@@ -94,7 +94,6 @@ public class PlayerController : MonoBehaviour
     {
         jumpPower = 0.5f;
         _rigidbody.AddForce(jumpPower * Vector3.up, ForceMode.Impulse);
-        CharacterManager.Instance.isJump = false;
     }
 
     //// ½´ÆÛ Á¡ÇÁ
@@ -111,9 +110,7 @@ public class PlayerController : MonoBehaviour
     {
         if(context.phase == InputActionPhase.Started && IsGround())
         {
-            CharacterManager.Instance.isJump = true;
             Debug.Log("Â«Çª");
-            aniHandler.SetAnimator(AnimationState.Jump);
             Jump();
         }
     }
@@ -132,10 +129,11 @@ public class PlayerController : MonoBehaviour
         {
             if(Physics.Raycast(rays[i], 0.1f, groundLayer))
             {
-                CharacterManager.Instance.state
+                CharacterManager.Instance.state = AnimationState.Jump;
                 return true;
             }
         }
+        CharacterManager.Instance.state = AnimationState.Idle;
         return false;
     }
 

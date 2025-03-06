@@ -2876,8 +2876,10 @@ GameObject:
   m_Component:
   - component: {fileID: 5412235173704531065}
   - component: {fileID: 640425675751906565}
+  - component: {fileID: 5412235173704531066}
+  - component: {fileID: 5412235173704531067}
   m_Layer: 0
-  m_Name: Lion
+  m_Name: JumpPlatform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3121,16 +3123,48 @@ Transform:
   m_GameObject: {fileID: 4636402608229590723}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.6777549, y: 0, z: 1.0277956}
+  m_LocalPosition: {x: -1.527, y: 0, z: 1.067}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 8719325455927004975}
   - {fileID: 4094539836739242877}
   - {fileID: 1555624635833841477}
   - {fileID: 4602251949852541427}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &5412235173704531066
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4636402608229590723}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.7, y: 0.5, z: 0.7}
+  m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!114 &5412235173704531067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4636402608229590723}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13fd54011a2e958448c9c35490e8db2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &5449104126677689033
 Transform:
   m_ObjectHideFlags: 0
@@ -3506,8 +3540,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _player: {fileID: 0}
-  isJump: 0
-  isWalk: 0
+  state: 0
 --- !u!114 &6402232236291394931
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3520,7 +3553,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bb042845f37bc541b307238f7febf88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  state: 0
 --- !u!114 &6402232236291394932
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3565,22 +3597,6 @@ GameObject:
   - component: {fileID: 11596649024834946}
   m_Layer: 0
   m_Name: Eyebrows
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!1 &6646830883709817029
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8719325455927004975}
-  m_Layer: 0
-  m_Name: animal_box
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3856,21 +3872,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8719325455927004975
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6646830883709817029}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0.5000001, y: -0.50000006, z: -0.4999999, w: 0.49999997}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
-  m_LocalScale: {x: 0.99999994, y: 2.8082814, z: 2.8082814}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 5412235173704531065}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &9191342928315033830
 Transform:
   m_ObjectHideFlags: 0

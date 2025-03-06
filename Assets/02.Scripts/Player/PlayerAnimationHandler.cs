@@ -20,9 +20,8 @@ public class PlayerAnimationHandler : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        
         SetAnimator(CharacterManager.Instance.state);
     }
 
