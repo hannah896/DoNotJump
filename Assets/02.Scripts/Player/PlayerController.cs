@@ -64,8 +64,6 @@ public class PlayerController : MonoBehaviour
     {
         //앞뒤의 움직임은 w, s의 값이므로 y값, 양옆의 움직임은 a, d의 값이므로 x값
         Vector3 dir = transform.forward * moveInput.y + transform.right * moveInput.x;
-
-        transform.eulerAngles += new Vector3(0, dir.x);
         //거리 = 속도 * 방향
         dir *= moveSpeed;
         //dir의 y값은 현재 0이기 때문에 y값을 가져와야 함
@@ -134,6 +132,7 @@ public class PlayerController : MonoBehaviour
         {
             if(Physics.Raycast(rays[i], 0.1f, groundLayer))
             {
+                CharacterManager.Instance.state
                 return true;
             }
         }
@@ -148,7 +147,7 @@ public class PlayerController : MonoBehaviour
         camRotX += mouseDelta.y * CamSensitivity; //y축을 회전해야 x가 회전함
         camRotX = Mathf.Clamp(camRotX, minXLook, maxXLook);
         cameraContainer.eulerAngles = new Vector3(-camRotX, 0, 0);
-
+         
         transform.eulerAngles += new Vector3(0, mouseDelta.x * CamSensitivity); //x축을 회전해야 y가 회전함
     }
 
