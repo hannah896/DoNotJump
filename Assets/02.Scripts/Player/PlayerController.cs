@@ -39,7 +39,7 @@ public class PlayerController : MonoBehaviour
     {
         minXLook = -45f;
         maxXLook = 45f;
-        jumpPower = 5f;
+        jumpPower = 1f;
     }
 
     private void Start()
@@ -134,6 +134,7 @@ public class PlayerController : MonoBehaviour
             }
         }
         CharacterManager.Instance.state = AnimationState.Idle;
+        StartCoroutine(Down());
         return false;
     }
 
@@ -179,7 +180,7 @@ public class PlayerController : MonoBehaviour
     //필요할때만 쓰기
     IEnumerator Down()
     {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(0.5f);
         _rigidbody.AddForce(Vector3.down * jumpPower, ForceMode.Impulse);
         Debug.Log("내려주는중~");
     }
