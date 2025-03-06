@@ -31,6 +31,7 @@ public class PlayerController : MonoBehaviour
 
     float rayLength = 0.1f;
 
+    public Action Jumping; 
 
     //민감도가 낮을수록 무빙이 느려짐
     private float CamSensitivity = 0.1f;
@@ -44,6 +45,7 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
+        CharacterManager.Instance.Controller = this;
         _rigidbody = GetComponent<Rigidbody>();
         aniHandler = GetComponent<PlayerAnimationHandler>();
         playerCam = Camera.main;
@@ -91,13 +93,14 @@ public class PlayerController : MonoBehaviour
     }
 
     // 점프
-    private void Jump()
+    public void Jump(float jumpPower)
     {
         _rigidbody.AddForce(jumpPower * Vector3.up, ForceMode.Impulse);
+        StartCoroutine(Down());
     }
 
     //// 슈퍼 점프
-    //private void SuperJump()
+    //private void SuperJump() 
     //{
     //    jumpPower = 0.5f;
     //    _rigidbody.AddForce(10 * jumpPower * Vector3.up, ForceMode.Impulse);
@@ -111,7 +114,7 @@ public class PlayerController : MonoBehaviour
         if(context.phase == InputActionPhase.Started && IsGround())
         {
             Debug.Log("짬푸");
-            Jump();
+            Jump(jumpPower);
         }
     }
 
@@ -134,7 +137,6 @@ public class PlayerController : MonoBehaviour
             }
         }
         CharacterManager.Instance.state = AnimationState.Idle;
-        StartCoroutine(Down());
         return false;
     }
 
@@ -180,7 +182,7 @@ public class PlayerController : MonoBehaviour
     //필요할때만 쓰기
     IEnumerator Down()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(4f);
         _rigidbody.AddForce(Vector3.down * jumpPower, ForceMode.Impulse);
         Debug.Log("내려주는중~");
     }

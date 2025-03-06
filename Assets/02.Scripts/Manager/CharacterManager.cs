@@ -6,9 +6,13 @@ using UnityEngine;
 public class CharacterManager : MonoBehaviour
 {
     private static CharacterManager _instance;
-    public Player _player; 
+    private static PlayerController _controller;
+    private Player _player;
+    
     public Player Player
     { get { return _player; } set { _player = value; } }
+    public PlayerController Controller
+    { get { return _controller; } set { _controller = value; } }
 
     public AnimationState state;
 
