@@ -6,7 +6,10 @@ using UnityEngine;
 public class CharacterManager : MonoBehaviour
 {
     private static CharacterManager _instance;
-
+    public Player _player; 
+    public Player Player
+    { get { return _player; } set { _player = value; } }
+    
     public bool isJump;
     public bool isWalk;
 

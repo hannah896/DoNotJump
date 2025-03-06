@@ -27,8 +27,8 @@ public class PlayerAnimationHandler : MonoBehaviour
         switch (state) 
         {
             case AnimationState.Jump:
-                CharacterManager.Instance.isJump = false;
                 animator.SetTrigger(jump);
+                CharacterManager.Instance.isJump = false;
                 break;
             case AnimationState.Walk:
                 animator.SetBool(walk, CharacterManager.Instance.isWalk);
