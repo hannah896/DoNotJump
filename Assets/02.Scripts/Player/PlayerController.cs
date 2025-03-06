@@ -32,13 +32,14 @@ public class PlayerController : MonoBehaviour
     float rayLength = 0.1f;
 
 
-    //¹Î°¨µµ°¡ ³·À»¼ö·Ï ¹«ºùÀÌ ´À·ÁÁü
+    //ë¯¼ê°ë„ê°€ ë‚®ì„ìˆ˜ë¡ ë¬´ë¹™ì´ ëŠë ¤ì§
     private float CamSensitivity = 0.1f;
 
     private void Awake()
     {
         minXLook = -45f;
         maxXLook = 45f;
+        jumpPower = 5f;
     }
 
     private void Start()
@@ -59,24 +60,24 @@ public class PlayerController : MonoBehaviour
         CameraLook();
     }
 
-    //¿òÁ÷ÀÓ ±¸Çö
+    //ì›€ì§ì„ êµ¬í˜„
     private void Move()
     {
-        //¾ÕµÚÀÇ ¿òÁ÷ÀÓÀº w, sÀÇ °ªÀÌ¹Ç·Î y°ª, ¾ç¿·ÀÇ ¿òÁ÷ÀÓÀº a, dÀÇ °ªÀÌ¹Ç·Î x°ª
+        //ì•ë’¤ì˜ ì›€ì§ì„ì€ w, sì˜ ê°’ì´ë¯€ë¡œ yê°’, ì–‘ì˜†ì˜ ì›€ì§ì„ì€ a, dì˜ ê°’ì´ë¯€ë¡œ xê°’
         Vector3 dir = transform.forward * moveInput.y + transform.right * moveInput.x;
-        //°Å¸® = ¼Óµµ * ¹æÇâ
+        //ê±°ë¦¬ = ì†ë„ * ë°©í–¥
         dir *= moveSpeed;
-        //dirÀÇ y°ªÀº ÇöÀç 0ÀÌ±â ¶§¹®¿¡ y°ªÀ» °¡Á®¿Í¾ß ÇÔ
+        //dirì˜ yê°’ì€ í˜„ì¬ 0ì´ê¸° ë•Œë¬¸ì— yê°’ì„ ê°€ì ¸ì™€ì•¼ í•¨
         dir.y = _rigidbody.velocity.y;
         aniHandler.SetAnimator(AnimationState.Walk);
-        //ÁøÂ¥·Î ¿òÁ÷ÀÌ°Ô ¸¸µå´Â ºÎºĞ
+        //ì§„ì§œë¡œ ì›€ì§ì´ê²Œ ë§Œë“œëŠ” ë¶€ë¶„
         _rigidbody.velocity = dir;
     }
 
-    //¿òÁ÷ÀÓ °ªÀ» ÀĞ¾î¿À´Â ¿ªÇÒ
+    //ì›€ì§ì„ ê°’ì„ ì½ì–´ì˜¤ëŠ” ì—­í• 
     public void OnMove(InputAction.CallbackContext context)
     {
-        //¿òÁ÷ÀÌ´Â »óÅÂÀÏ ¶§
+        //ì›€ì§ì´ëŠ” ìƒíƒœì¼ ë•Œ
         if (context.phase == InputActionPhase.Performed)
         {
             CharacterManager.Instance.state = AnimationState.Walk;
@@ -89,28 +90,27 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // Á¡ÇÁ
+    // ì í”„
     private void Jump()
     {
-        jumpPower = 0.5f;
         _rigidbody.AddForce(jumpPower * Vector3.up, ForceMode.Impulse);
     }
 
-    //// ½´ÆÛ Á¡ÇÁ
+    //// ìŠˆí¼ ì í”„
     //private void SuperJump()
     //{
     //    jumpPower = 0.5f;
     //    _rigidbody.AddForce(10 * jumpPower * Vector3.up, ForceMode.Impulse);
     //}
 
-    //Á¡ÇÁ¿©ºÎ ¹Ş¾Æ¿À´Â ¿ªÇÒ
+    //ì í”„ì—¬ë¶€ ë°›ì•„ì˜¤ëŠ” ì—­í• 
 
-    //Á¡ÇÁ ÀÔ·ÂÀ» ¹Ş¾Æ¿À´Â ¿ªÇÒ
+    //ì í”„ ì…ë ¥ì„ ë°›ì•„ì˜¤ëŠ” ì—­í• 
     public void OnJump(InputAction.CallbackContext context)
     {
         if(context.phase == InputActionPhase.Started && IsGround())
         {
-            Debug.Log("Â«Çª");
+            Debug.Log("ì§¬í‘¸");
             Jump();
         }
     }
@@ -138,18 +138,18 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    // TODO : ÀÓ½ÃÄ«¸Ş¶ó!!!! ³ªÁß¿¡ ²À ¼öÁ¤ÇÒ°Í
+    // TODO : ì„ì‹œì¹´ë©”ë¼!!!! ë‚˜ì¤‘ì— ê¼­ ìˆ˜ì •í• ê²ƒ
     void CameraLook()
     {
-        //Ä«¸Ş¶ó¸¦ Ä¿¼­ÀÇ x¸¸Å­ È¸Àü½ÃÅ²´Ù.
-        camRotX += mouseDelta.y * CamSensitivity; //yÃàÀ» È¸ÀüÇØ¾ß x°¡ È¸ÀüÇÔ
+        //ì¹´ë©”ë¼ë¥¼ ì»¤ì„œì˜ xë§Œí¼ íšŒì „ì‹œí‚¨ë‹¤.
+        camRotX += mouseDelta.y * CamSensitivity; //yì¶•ì„ íšŒì „í•´ì•¼ xê°€ íšŒì „í•¨
         camRotX = Mathf.Clamp(camRotX, minXLook, maxXLook);
         cameraContainer.eulerAngles = new Vector3(-camRotX, 0, 0);
          
-        transform.eulerAngles += new Vector3(0, mouseDelta.x * CamSensitivity); //xÃàÀ» È¸ÀüÇØ¾ß y°¡ È¸ÀüÇÔ
+        transform.eulerAngles += new Vector3(0, mouseDelta.x * CamSensitivity); //xì¶•ì„ íšŒì „í•´ì•¼ yê°€ íšŒì „í•¨
     }
 
-    ////µŞÅë¼ö Ä«¸Ş¶ó È¸Àü
+    ////ë’·í†µìˆ˜ ì¹´ë©”ë¼ íšŒì „
     //void CameraLook()
     //{
     //    camRotX += mouseDelta.y * CamSensitivity;
@@ -162,18 +162,25 @@ public class PlayerController : MonoBehaviour
     //    playerCam.transform.parent.gameObject.transform.position = new Vector3(transform.position.x, 0, transform.position.z);
     //}
 
-    //¸¶¿ì½º ¹æÇâ ¹Ş¾Æ¿À±â
+    //ë§ˆìš°ìŠ¤ ë°©í–¥ ë°›ì•„ì˜¤ê¸°
     public void OnLook(InputAction.CallbackContext context)
     {
         mouseDelta = context.ReadValue<Vector2>();
     }
 
-    //¹Ù¶óº» ¹æÇâÀÇ ¿ÀºêÁ§Æ® ·¹ÀÌÄ³½ºÆ®
+    //ë°”ë¼ë³¸ ë°©í–¥ì˜ ì˜¤ë¸Œì íŠ¸ ë ˆì´ìºìŠ¤íŠ¸
     void Interact()
     {
         Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         RaycastHit hit;
 
         Physics.Raycast(ray, out hit, rayLength);
+    }
+    //í•„ìš”í• ë•Œë§Œ ì“°ê¸°
+    IEnumerator Down()
+    {
+        yield return new WaitForSeconds(3f);
+        _rigidbody.AddForce(Vector3.down * jumpPower, ForceMode.Impulse);
+        Debug.Log("ë‚´ë ¤ì£¼ëŠ”ì¤‘~");
     }
 }

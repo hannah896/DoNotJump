@@ -184,7 +184,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 367046765}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -736,7 +736,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 280e50322c59a224281ed668c426355c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1258,7 +1258,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!1 &1501041346
 GameObject:
   m_ObjectHideFlags: 0
@@ -3503,6 +3503,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 45a8c15e-c808-4b67-90dc-07faff32bc1d
     m_ActionName: PlayerMove/New action[/Mouse/scroll/y]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 11c75f06-8f3a-412a-b71a-8e45e384368d
+    m_ActionName: PlayerMove/Interact[/Mouse/position]
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: 
   m_DefaultActionMap: PlayerMove
@@ -3565,10 +3569,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb31f6a4b84276843af031abd0823625, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHP: 0
-  HP: 0
-  maxDash: 0
-  Dash: 0
+  maxHP: 100
+  HP: 100
+  maxDash: 100
+  Dash: 100
 --- !u!1 &6521915981427259407
 GameObject:
   m_ObjectHideFlags: 0
@@ -3895,6 +3899,6 @@ SceneRoots:
   - {fileID: 1024956599926118165}
   - {fileID: 578634375}
   - {fileID: 847293315}
-  - {fileID: 367046768}
   - {fileID: 921913085}
   - {fileID: 5412235173704531065}
+  - {fileID: 367046768}

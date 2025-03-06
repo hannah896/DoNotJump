@@ -1,25 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class JumpPlatform : MonoBehaviour
 {
     GameObject obj;
     Rigidbody rb;
+    BoxCollider box;
 
-    float power = 50f;
-    private void OnCollisionEnter(Collision collision)
+    private void Start()
     {
-        if (collision.gameObject.TryGetComponent<Rigidbody>(out rb) == false) return;
-        obj = collision.gameObject;
-        rb.AddForce(rb.transform.up * power, ForceMode.Impulse);
-        StartCoroutine(Down());
+        box = GetComponent<BoxCollider>();
     }
 
-    IEnumerator Down()
+    float power = 5f;
+    private void OnCollisionEnter(Collision collision)
     {
-        yield return new WaitForSeconds(5f);
-        rb.AddForce(obj.transform.up * -(power -3f) , ForceMode.Impulse);
-        Debug.Log("내려주는중~");
+        if (collision.gameObject.CompareTag("Player") &&
+            collision.transform.position.y > box.bounds.size.y + transform.position.y)
+        {
+            if (collision.gameObject.TryGetComponent<Rigidbody>(out rb) == false) return;
+            obj = collision.gameObject;
+            rb.AddForce(rb.transform.up * power, ForceMode.Impulse);
+        }
     }
 }
