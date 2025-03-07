@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -98,6 +99,8 @@ public class PlayerController : MonoBehaviour
     public void Jump(float jumpPower)
     {
         _rigidbody.AddForce(jumpPower * Vector3.up, ForceMode.Impulse);
+        
+        
     }
 
     //// 슈퍼 점프
@@ -139,7 +142,7 @@ public class PlayerController : MonoBehaviour
         }
         CharacterManager.Instance.state = AnimationState.Idle;
         return false;
-    }
+    }   
 
     // TODO : 임시카메라!!!! 나중에 꼭 수정할것
     void CameraLook()
@@ -172,7 +175,6 @@ public class PlayerController : MonoBehaviour
     }
 
     //바라본 방향의 오브젝트 레이캐스트
-
     public void OnInteract(InputAction.CallbackContext context)
     {
         Vector2 mousePos = context.ReadValue<Vector2>();
@@ -212,4 +214,14 @@ public class PlayerController : MonoBehaviour
         Gizmos.DrawLine(drawingRay.origin, drawingRay.origin + drawingRay.direction * 10f);
     }
 
+    //속도가 0일때 반작용마냥 반대방향으로 밀어주는 코루틴
+    IEnumerator Reaction()
+    {
+        yield return null;
+        if (_rigidbody.velocity.y == 0)
+        {
+            _rigidbody.AddForce(Vector3.down * jumpPower * 1.5f, ForceMode.Impulse);
+        }
+        yield break;
+    }
 }
