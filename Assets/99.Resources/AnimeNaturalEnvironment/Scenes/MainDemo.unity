@@ -22264,7 +22264,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 128
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 2004327996}
+  m_TargetTexture: {fileID: 1346977432}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 1
@@ -28798,6 +28798,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1027196080}
   - component: {fileID: 1027196081}
+  - component: {fileID: 1027196082}
   m_Layer: 5
   m_Name: ItemUI
   m_TagString: Untagged
@@ -28852,6 +28853,18 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &1027196082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1027196079}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb07283e147524847834294be306eef5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1032687384
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -36716,6 +36729,44 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 571428742}
   m_PrefabAsset: {fileID: 0}
+--- !u!84 &1346977432
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 5
+  m_Width: 512
+  m_Height: 512
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 94
+  m_ColorFormat: 4
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 1
+  m_UseDynamicScale: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!1001 &1347813555
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -38990,6 +39041,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9470444b46b76f34b945624a28526799, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  HPbar: {fileID: 0}
+  DashBar: {fileID: 0}
+  HPTxt: {fileID: 0}
+  DashTxt: {fileID: 0}
+  StatIndicator: {fileID: 0}
+  ItemName: {fileID: 0}
+  ItemDescription: {fileID: 0}
+  charManager: {fileID: 0}
+  ItemIndicator: {fileID: 0}
 --- !u!1001 &1423862257
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -53427,44 +53487,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1691500843}
   m_PrefabAsset: {fileID: 0}
---- !u!84 &2004327996
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_ForcedFallbackFormat: 4
-  m_DownscaleFallback: 0
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 5
-  m_Width: 512
-  m_Height: 512
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 94
-  m_ColorFormat: 4
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 1
-  m_UseDynamicScale: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1001 &2011896487
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -58746,6 +58768,7 @@ GameObject:
   - component: {fileID: 3164525344520865726}
   - component: {fileID: 5590193987986216945}
   - component: {fileID: 1071530271672661091}
+  - component: {fileID: 5590193987986216946}
   m_Layer: 5
   m_Name: DashBar
   m_TagString: Untagged
@@ -59388,7 +59411,7 @@ GameObject:
   - component: {fileID: 2497633541140238374}
   - component: {fileID: 7528803697369922568}
   - component: {fileID: 7528803697369922569}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ChocolateCake
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -67503,6 +67526,7 @@ GameObject:
   - component: {fileID: 7036892436784355788}
   - component: {fileID: 5060334709640552994}
   - component: {fileID: 161547073827829804}
+  - component: {fileID: 7036892436784355789}
   m_Layer: 5
   m_Name: HPBar
   m_TagString: Untagged
@@ -67673,6 +67697,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 0.01
+--- !u!114 &5590193987986216946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 730433507172507913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5916937e8aa7f4b4ab511a2b81a858fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stat: 1
 --- !u!23 &5621848027342396906
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -69397,7 +69434,7 @@ GameObject:
   - component: {fileID: 7011011698877308763}
   - component: {fileID: 998808930166843730}
   - component: {fileID: 8197577769378585543}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: StrawberrySpongeCake
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -69954,6 +69991,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5471744667906063130}
   m_CullTransparentMesh: 1
+--- !u!114 &7036892436784355789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5471744667906063130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5916937e8aa7f4b4ab511a2b81a858fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stat: 0
 --- !u!4 &7064679470349904918
 Transform:
   m_ObjectHideFlags: 0
@@ -71114,6 +71164,9 @@ MonoBehaviour:
     m_Bits: 64
   cameraContainer: {fileID: 0}
   playerCam: {fileID: 6306842004422587133}
+  InteractableLayer:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!4 &7650938134061330367
 Transform:
   m_ObjectHideFlags: 0

@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour
     private float camRotY;
     private float minXLook;
     private float maxXLook;
+    public LayerMask InteractableLayer;
     
     Quaternion targetRot;
 
@@ -97,7 +98,6 @@ public class PlayerController : MonoBehaviour
     public void Jump(float jumpPower)
     {
         _rigidbody.AddForce(jumpPower * Vector3.up, ForceMode.Impulse);
-        StartCoroutine(Down());
     }
 
     //// 슈퍼 점프
@@ -178,21 +178,18 @@ public class PlayerController : MonoBehaviour
         Vector2 mousePos = context.ReadValue<Vector2>();
         Ray ray = Camera.main.ScreenPointToRay(mousePos);
         drawingRay = ray;
-
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit))
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, InteractableLayer) &&
+            hit.collider.gameObject.TryGetComponent<ItemObject>(out ItemObject item) == true)
         {
-            Debug.Log(hit.transform.name);
+            Debug.Log("못피했죠?");
+            UIManager.Instance.Display(item.itemInfo);
         }
-    } 
-
-    //필요할때만 쓰기
-    IEnumerator Down()
-    {
-        yield return new WaitForSeconds(4f);
-        _rigidbody.AddForce(Vector3.down * jumpPower, ForceMode.Impulse);
-        Debug.Log("내려주는중~");
+        else
+        {
+            UIManager.Instance.Display();
+        }
     }
 
     private void OnDrawGizmos()
