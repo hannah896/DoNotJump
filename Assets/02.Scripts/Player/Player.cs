@@ -25,7 +25,7 @@ public class Player : MonoBehaviour
         CharacterManager.Instance.Player = this;
     }
 
-    void Heal(Stat stat, int value)
+    public void Heal(Stat stat, int value)
     {
         switch (stat) 
         {
@@ -41,7 +41,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    void Damage(Stat stat, int value)
+    public void Damage(Stat stat, int value)
     {
         switch (stat)
         {

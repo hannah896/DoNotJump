@@ -23,7 +23,7 @@ public class JumpPlatform : MonoBehaviour
             if (collision.gameObject.TryGetComponent<Rigidbody>(out rb) == false) return;
             obj = collision.gameObject;
             rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
-            CharacterManager.Instance.Controller.Jump(power);
+            CharacterManager.Instance.Controller.Jump(power);                 
         }
     }
 }
