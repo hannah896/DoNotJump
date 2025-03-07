@@ -6,29 +6,38 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+    [Header("Stat Info")]
     private Image HPbar;
     private Image DashBar;
     private TextMeshProUGUI HP;
     private TextMeshProUGUI Dash;
 
+    [Header("Item Info")]
+    private Text ItemName;
+    private Text ItemDescription;
     private CharacterManager charManager;
 
     private void Start()
     {
         charManager = CharacterManager.Instance;
-        HPbar = transform.Find("HPBar").GetComponentInChildren<Image>();
-        DashBar = transform.Find("DashBar").GetComponentInChildren<Image>();
-        HP = transform.Find("HPBar").GetComponentInChildren<TextMeshProUGUI>();
-        Dash = transform.Find("DashBar").GetComponentInChildren<TextMeshProUGUI>();
+
+        HPbar = Utility.FindComponent<Image>(transform.Find("PlayerUI").gameObject, "HP");
+        DashBar = Utility.FindComponent<Image>(transform.Find("PlayerUI").gameObject, "Dash");
+        HP = Utility.FindComponent<TextMeshProUGUI>(transform.Find("PlayerUI").gameObject, "HPTxt");
+        Dash = Utility.FindComponent<TextMeshProUGUI>(transform.Find("PlayerUI").gameObject, "DashTxt");
+
+        ItemName = Utility.FindComponent<Text>(transform.Find("ItemUI").gameObject, "ItemName");
+        ItemDescription = Utility.FindComponent<Text>(transform.Find("ItemUI").gameObject, "ItemDescription");
+
     }
 
     private void Update()
     {
-        SetUI(Stat.HP);
-        SetUI(Stat.Dash);
+        SetPlayerUI(Stat.HP);
+        SetPlayerUI(Stat.Dash);
     }
 
-    void SetUI(Stat stat)
+    void SetPlayerUI(Stat stat)
     {
         switch(stat)
         {
@@ -41,5 +50,10 @@ public class UIManager : MonoBehaviour
                 Dash.text = $"{charManager.Player.Dash}/{charManager.Player.maxDash}";
                 break;
         }
+    }
+
+    void SetItemUI()
+    {
+
     }
 }

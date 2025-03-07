@@ -1,12 +1,7 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
-using UnityEngine.Windows;
 
 public class PlayerController : MonoBehaviour
 {
@@ -27,9 +22,13 @@ public class PlayerController : MonoBehaviour
     private float camRotY;
     private float minXLook;
     private float maxXLook;
+    
     Quaternion targetRot;
 
+
     float rayLength = 0.1f;
+
+    private Ray drawingRay;
 
     public Action Jumping; 
 
@@ -50,6 +49,8 @@ public class PlayerController : MonoBehaviour
         aniHandler = GetComponent<PlayerAnimationHandler>();
         playerCam = Camera.main;
         cameraContainer = playerCam.transform.parent;
+
+        //Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void FixedUpdate()
@@ -140,7 +141,6 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
-
     // TODO : 임시카메라!!!! 나중에 꼭 수정할것
     void CameraLook()
     {
@@ -172,13 +172,21 @@ public class PlayerController : MonoBehaviour
     }
 
     //바라본 방향의 오브젝트 레이캐스트
-    void Interact()
+
+    public void OnInteract(InputAction.CallbackContext context)
     {
-        Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        Vector2 mousePos = context.ReadValue<Vector2>();
+        Ray ray = Camera.main.ScreenPointToRay(mousePos);
+        drawingRay = ray;
+
         RaycastHit hit;
 
-        Physics.Raycast(ray, out hit, rayLength);
-    }
+        if (Physics.Raycast(ray, out hit))
+        {
+            Debug.Log(hit.transform.name);
+        }
+    } 
+
     //필요할때만 쓰기
     IEnumerator Down()
     {
@@ -186,4 +194,25 @@ public class PlayerController : MonoBehaviour
         _rigidbody.AddForce(Vector3.down * jumpPower, ForceMode.Impulse);
         Debug.Log("내려주는중~");
     }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red; // 기즈모 색상 설정
+
+        Ray[] rays = new Ray[4]
+        {
+        new Ray(transform.position + (transform.forward * 0.2f) + Vector3.up * 0.1f, Vector3.down),
+        new Ray(transform.position + (-transform.forward * 0.2f) + Vector3.up * 0.1f, Vector3.down),
+        new Ray(transform.position + (transform.right * 0.2f) + Vector3.up * 0.1f, Vector3.down),
+        new Ray(transform.position + (-transform.right * 0.2f) + Vector3.up * 0.1f, Vector3.down)
+        };
+
+        foreach (var ray in rays)
+        {
+            Gizmos.DrawLine(ray.origin, ray.origin + ray.direction * 0.5f); // 시작점 + 방향 * 길이
+        }
+
+        Gizmos.DrawLine(drawingRay.origin, drawingRay.origin + drawingRay.direction * 10f);
+    }
+
 }
