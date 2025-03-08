@@ -15,7 +15,7 @@ public class JumpPlatform : MonoBehaviour
     }
 
     float power = 5f;
-    private void OnCollisionEnter(Collision collision)
+    private void OnCollisionStay(Collision collision)
     {
         if (collision.gameObject.CompareTag("Player") &&
             collision.transform.position.y > box.bounds.size.y + transform.position.y)

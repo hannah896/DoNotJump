@@ -30,6 +30,7 @@ public class PlayerAnimationHandler : MonoBehaviour
         switch (state) 
         {
             case AnimationState.Jump:
+                animator.SetBool(walk, false);
                 animator.SetTrigger(jump);
                 break;
             case AnimationState.Walk:

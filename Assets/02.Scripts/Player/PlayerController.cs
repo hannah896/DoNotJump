@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody _rigidbody;
     private PlayerAnimationHandler aniHandler;
 
+
     [Header("MoveInfo")]
     public float jumpPower;
     public float moveSpeed;
@@ -19,29 +20,35 @@ public class PlayerController : MonoBehaviour
     [Header("LookInfo")]
     public Transform cameraContainer;
     public Camera playerCam;
+    private float CamSensitivity = 0.1f; //민감도가 낮을수록 무빙이 느려짐
     private float camRotX;
     private float camRotY;
     private float minXLook;
     private float maxXLook;
     public LayerMask InteractableLayer;
-    
     Quaternion targetRot;
 
+    [Header("PhysicsInfo")]
+    public AnimationState playerState;
+    public Vector3 playerVelocity;
+    private Vector3 originGravity;
+    private Vector3 jumpGravity;
+    public float gravity;
 
+    [Header("RayInfo")]
+    private Vector2 mousePos;
     float rayLength = 0.1f;
-
     private Ray drawingRay;
-
-    public Action Jumping; 
-
-    //민감도가 낮을수록 무빙이 느려짐
-    private float CamSensitivity = 0.1f;
+    ItemObject item;
 
     private void Awake()
     {
         minXLook = -45f;
         maxXLook = 45f;
         jumpPower = 1f;
+
+        originGravity = new Vector3(0, -9.8f, 0);
+        jumpGravity = originGravity * jumpPower;
     }
 
     private void Start()
@@ -55,9 +62,27 @@ public class PlayerController : MonoBehaviour
         //Cursor.lockState = CursorLockMode.Locked;
     }
 
+    private void Update()
+    {
+        playerState = CharacterManager.Instance.state;
+        playerVelocity = _rigidbody.GetPointVelocity(transform.position);
+        gravity = Physics.gravity.y;
+    }
+
     private void FixedUpdate()
     {
         Move();
+        if (IsGround())
+        {
+            if (Mathf.Abs(playerVelocity.x) > 0.3f || Mathf.Abs(playerVelocity.z) > 0.1f)
+            {
+                CharacterManager.Instance.state = AnimationState.Walk;
+            }
+            else
+            {
+                CharacterManager.Instance.state = AnimationState.Idle;
+            }
+        }
     }
 
     private void LateUpdate()
@@ -74,7 +99,6 @@ public class PlayerController : MonoBehaviour
         dir *= moveSpeed;
         //dir의 y값은 현재 0이기 때문에 y값을 가져와야 함
         dir.y = _rigidbody.velocity.y;
-        aniHandler.SetAnimator(AnimationState.Walk);
         //진짜로 움직이게 만드는 부분
         _rigidbody.velocity = dir;
     }
@@ -85,13 +109,12 @@ public class PlayerController : MonoBehaviour
         //움직이는 상태일 때
         if (context.phase == InputActionPhase.Performed)
         {
-            CharacterManager.Instance.state = AnimationState.Walk;
+            Debug.Log("어디서나 당당하게 걷기");
             moveInput = context.ReadValue<Vector2>();
         }
         else if (context.phase == InputActionPhase.Canceled)
         {
             moveInput = Vector2.zero;
-            CharacterManager.Instance.state = AnimationState.Idle;
         }
     }
 
@@ -99,8 +122,7 @@ public class PlayerController : MonoBehaviour
     public void Jump(float jumpPower)
     {
         _rigidbody.AddForce(jumpPower * Vector3.up, ForceMode.Impulse);
-        
-        
+        StartCoroutine(PushDown());
     }
 
     //// 슈퍼 점프
@@ -117,7 +139,6 @@ public class PlayerController : MonoBehaviour
     {
         if(context.phase == InputActionPhase.Started && IsGround())
         {
-            Debug.Log("짬푸");
             Jump(jumpPower);
         }
     }
@@ -134,13 +155,15 @@ public class PlayerController : MonoBehaviour
 
         for (int i = 0; i < rays.Length; i++) 
         {
-            if(Physics.Raycast(rays[i], 0.1f, groundLayer))
+            if(Physics.Raycast(rays[i], 0.05f, groundLayer))
             {
-                CharacterManager.Instance.state = AnimationState.Jump;
+                CharacterManager.Instance.state = AnimationState.Idle;
                 return true;
             }
         }
-        CharacterManager.Instance.state = AnimationState.Idle;
+        Physics.gravity = originGravity;
+        CharacterManager.Instance.state = AnimationState.Jump;
+        
         return false;
     }   
 
@@ -177,21 +200,40 @@ public class PlayerController : MonoBehaviour
     //바라본 방향의 오브젝트 레이캐스트
     public void OnInteract(InputAction.CallbackContext context)
     {
-        Vector2 mousePos = context.ReadValue<Vector2>();
-        Ray ray = Camera.main.ScreenPointToRay(mousePos);
-        drawingRay = ray;
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, InteractableLayer) &&
-            hit.collider.gameObject.TryGetComponent<ItemObject>(out ItemObject item) == true)
+        if (Interact(context.ReadValue<Vector2>()))
         {
-            Debug.Log("못피했죠?");
             UIManager.Instance.Display(item.itemInfo);
         }
         else
         {
             UIManager.Instance.Display();
         }
+    }
+
+    //상호작용하기
+    private bool Interact()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(mousePos);
+        drawingRay = ray;
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, InteractableLayer) &&
+            hit.collider.gameObject.TryGetComponent<ItemObject>(out item) == true)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    //아이템 사용
+    public void OnUse(InputAction.CallbackContext context)
+    {
+        if (!Interact()) return;
+        CharacterManager.Instance.Condition.UseItem(item.itemInfo);
+        Destroy(item.gameObject);
     }
 
     private void OnDrawGizmos()
@@ -208,20 +250,23 @@ public class PlayerController : MonoBehaviour
 
         foreach (var ray in rays)
         {
-            Gizmos.DrawLine(ray.origin, ray.origin + ray.direction * 0.5f); // 시작점 + 방향 * 길이
+            Gizmos.DrawLine(ray.origin, ray.origin + ray.direction * 0.05f); // 시작점 + 방향 * 길이
         }
 
         Gizmos.DrawLine(drawingRay.origin, drawingRay.origin + drawingRay.direction * 10f);
     }
 
-    //속도가 0일때 반작용마냥 반대방향으로 밀어주는 코루틴
-    IEnumerator Reaction()
+    IEnumerator PushDown()
     {
-        yield return null;
-        if (_rigidbody.velocity.y == 0)
+        if (_rigidbody.velocity.y < 0.19f)
         {
-            _rigidbody.AddForce(Vector3.down * jumpPower * 1.5f, ForceMode.Impulse);
+            Physics.gravity = jumpGravity;
+            Debug.Log("내려드렸습니다");
+            yield break;
         }
-        yield break;
+        else
+        {
+            yield return null;
+        }
     }
 }

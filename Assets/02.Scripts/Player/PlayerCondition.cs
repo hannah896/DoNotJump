@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerCondition : MonoBehaviour
@@ -16,4 +17,9 @@ public class PlayerCondition : MonoBehaviour
         }
     }
 
+    public void UseItem(ItemInfo item)
+    {
+        SetStat(item.stat, item.value);
+        Debug.Log("³Ä¹Ö");
+    }
 }

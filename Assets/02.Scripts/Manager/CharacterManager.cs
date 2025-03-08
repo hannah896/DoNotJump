@@ -7,14 +7,17 @@ public class CharacterManager : MonoBehaviour
 {
     private static CharacterManager _instance;
     private static PlayerController _controller;
+    private static PlayerCondition _condition;
     private Player _player;
-    
+
+    public AnimationState state;
+
     public Player Player
     { get { return _player; } set { _player = value; } }
     public PlayerController Controller
     { get { return _controller; } set { _controller = value; } }
-
-    public AnimationState state;
+    public PlayerCondition Condition
+    { get { return _condition; } set { _condition = value; } }
 
     public static CharacterManager Instance
     {
