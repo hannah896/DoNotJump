@@ -7,8 +7,6 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody _rigidbody;
-    private PlayerAnimationHandler aniHandler;
-
 
     [Header("MoveInfo")]
     public float jumpPower;
@@ -55,7 +53,6 @@ public class PlayerController : MonoBehaviour
     {
         CharacterManager.Instance.Controller = this;
         _rigidbody = GetComponent<Rigidbody>();
-        aniHandler = GetComponent<PlayerAnimationHandler>();
         playerCam = Camera.main;
         cameraContainer = playerCam.transform.parent;
 
@@ -200,7 +197,9 @@ public class PlayerController : MonoBehaviour
     //바라본 방향의 오브젝트 레이캐스트
     public void OnInteract(InputAction.CallbackContext context)
     {
-        if (Interact(context.ReadValue<Vector2>()))
+        mousePos = context.ReadValue<Vector2>();
+        
+        if (Interact())
         {
             UIManager.Instance.Display(item.itemInfo);
         }
@@ -232,6 +231,7 @@ public class PlayerController : MonoBehaviour
     public void OnUse(InputAction.CallbackContext context)
     {
         if (!Interact()) return;
+        Debug.Log(item.itemInfo);
         CharacterManager.Instance.Condition.UseItem(item.itemInfo);
         Destroy(item.gameObject);
     }

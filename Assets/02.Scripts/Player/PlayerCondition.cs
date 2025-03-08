@@ -5,6 +5,10 @@ using UnityEngine;
 
 public class PlayerCondition : MonoBehaviour
 {
+    private void Start()
+    {
+        CharacterManager.Instance.Condition = this;
+    }
     public void SetStat(Stat stat, int value)
     {
         if (value < 0)
