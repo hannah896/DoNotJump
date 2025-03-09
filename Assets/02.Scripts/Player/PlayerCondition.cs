@@ -7,24 +7,34 @@ using UnityEngine;
 public class PlayerCondition : MonoBehaviour
 {
     private Player player;
+    Coroutine curCoroutin;
+    
+
     private void Start()
     {
-        CharacterManager.Instance.Condition = this;
         player = CharacterManager.Instance.Player;
     }
     public void FixedUpdate()
     {
-        //if (player.Dash <= player.MaxDash)
-        //{
-        //    Restore();
-        //}
-        //else
-        //{
-        //    StopCoroutine();
-        //}
+        if (player.Dash < player.MaxDash)
+        {
+            if (curCoroutin != null) return;
+            Debug.Log("코루틴 시작!");
+            curCoroutin = StartCoroutine(Restore());
+        }
+        else
+        {
+            if (curCoroutin != null)
+            {
+                Debug.Log("코루틴 끝!");
+                StopCoroutine(curCoroutin);
+                curCoroutin = null;
+            }
+            Debug.Log("코루틴 없음");
+        }
     }
 
-    public void SetStat(Stat stat, int value)
+    public void SetStat(Stat stat, float value)
     {
         if (value < 0)
         {
@@ -42,9 +52,24 @@ public class PlayerCondition : MonoBehaviour
         Debug.Log("냐밍");
     }
 
-    //IEnumerator Restore()
-    //{
-    //    yield return new WaitForSeconds(3f);
-    //    player.Dash += -
-    //}
+    IEnumerator Restore()
+    {
+        Debug.Log("힐해줘!!!");
+        SetStat(Stat.Dash, 0.1f);
+        if (player.Dash >= player.MaxDash)
+        {
+            Debug.Log("해드렷습니다");
+            yield break;
+        }
+        else
+        {
+            while (true)
+            {
+                Debug.Log("지금 해주는중~");
+                yield return new WaitForSeconds(1f);
+                Debug.Log("힐해줘!!!2트");
+                SetStat(Stat.Dash, 0.5f);
+            }
+        }
+    }
 }

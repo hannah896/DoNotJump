@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VInspector;
 
 public enum Stat 
 {
@@ -9,10 +10,17 @@ public enum Stat
 }
 public class Player : MonoBehaviour
 {
-    public float MaxHP { get {  return MaxHP; } private set { value = MaxHP; } }
-    public float HP { get { return HP; } private set { HP = value; } }
-    public float MaxDash { get { return MaxDash; } private set { MaxDash = value; } }
-    public float Dash { get { return Dash; } private set { Dash = value; } }
+    [ShowInInspector, ReadOnly]
+    public float MaxHP { get; private set; }
+    
+    [ShowInInspector, ReadOnly]
+    public float HP { get; private set; }
+    
+    [ShowInInspector, ReadOnly]
+    public float MaxDash { get; private set; }
+    
+    [ShowInInspector, ReadOnly]
+    public float Dash { get; private set; }
 
     private void Awake()
     {
@@ -20,12 +28,7 @@ public class Player : MonoBehaviour
         MaxDash = Dash = 100;
     }
 
-    private void Start()
-    {
-        CharacterManager.Instance.Player = this;
-    }
-
-    public void Heal(Stat stat, int value)
+    public void Heal(Stat stat, float value)
     {
         switch (stat) 
         {
@@ -41,7 +44,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void Damage(Stat stat, int value)
+    public void Damage(Stat stat, float value)
     {
         switch (stat)
         {

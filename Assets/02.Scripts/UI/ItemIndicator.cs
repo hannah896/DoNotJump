@@ -5,16 +5,26 @@ using UnityEngine;
 
 public class ItemIndicator : MonoBehaviour
 {
+    UIManager uiManager;
+
+    public TextMeshProUGUI ItemName;
+    public TextMeshProUGUI ItemDescription;
+
+    private void OnValidate()
+    {
+        ItemName = Utility.FindComponent<TextMeshProUGUI>(this.gameObject, "ItemName");
+        ItemDescription = Utility.FindComponent<TextMeshProUGUI>(this.gameObject, "ItemDescription");
+    }
+
     private void Start()
     {
-        UIManager.Instance.ItemName = Utility.FindComponent<TextMeshProUGUI>(this.gameObject, "ItemName");
-        UIManager.Instance.ItemDescription = Utility.FindComponent<TextMeshProUGUI>(this.gameObject, "ItemDescription");
-        UIManager.Instance.ItemIndicator = this;
+        uiManager = UIManager.Instance;
+        uiManager.ItemIndicator = this;
     }
 
     public void SetItemUI(ItemInfo item)
     {
-        UIManager.Instance.ItemName.text = item.name;
-        UIManager.Instance.ItemDescription.text = item.description;
+        uiManager.ItemName.text = item.name;
+        uiManager.ItemDescription.text = item.description;
     }
 }

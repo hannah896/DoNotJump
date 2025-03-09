@@ -20,11 +20,25 @@ public class UIManager : MonoBehaviour
     [Header("Item Info")]
     public TextMeshProUGUI ItemName;
     public TextMeshProUGUI ItemDescription;
-    public CharacterManager charManager;
 
+
+    public CharacterManager charManager;
     public ItemIndicator ItemIndicator;
 
+    private void OnValidate()
+    {
+        //플레이어 UI데이터 가져오기
+        StatIndicator hpUI = Utility.FindComponent<StatIndicator>(gameObject, "HPBar");
+        StatIndicator dashUI = Utility.FindComponent<StatIndicator>(gameObject, "DashBar");
+        HPbar = hpUI.Bar;
+        HPTxt = hpUI.Txt;
+        DashBar = dashUI.Bar;
+        DashTxt = dashUI.Txt;
 
+        ItemIndicator itemUI = Utility.FindComponent<ItemIndicator>(gameObject, "ItemUI");
+        ItemName = itemUI.ItemName;
+        ItemDescription = itemUI.ItemDescription;
+    }
     private void Awake()
     {
         if (Instance == null)

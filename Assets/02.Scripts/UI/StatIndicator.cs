@@ -6,26 +6,22 @@ using UnityEngine.UI;
 
 public class StatIndicator : MonoBehaviour
 {
-    public Stat stat;
     private UIManager _uiManager;
+
+    public Image Bar;
+    public TextMeshProUGUI Txt;
+
+    private void OnValidate()
+    {
+        Bar = Utility.FindComponent<Image>(gameObject, "Bar");
+        Txt = Utility.FindComponent<TextMeshProUGUI>(gameObject, "Txt");
+    }
 
     //자식 오브젝트들 연결시키기
     private void Start()
     {
         UIManager.Instance.StatIndicator = this;
         _uiManager = UIManager.Instance;
-
-        switch(stat)
-        {
-            case Stat.HP:
-                _uiManager.HPbar = GetComponentInChildren<Image>();
-                _uiManager.HPTxt = GetComponentInChildren<TextMeshProUGUI>();
-                break;
-            case Stat.Dash:
-                _uiManager.DashBar = GetComponentInChildren<Image>();
-                _uiManager.DashTxt = GetComponentInChildren<TextMeshProUGUI>();
-                break;
-        }
     }
     
 
@@ -34,12 +30,13 @@ public class StatIndicator : MonoBehaviour
         switch (stat)
         {
             case Stat.HP:
-                _uiManager.HPbar.fillAmount = _uiManager.charManager.Player.HP / _uiManager.charManager.Player.maxHP;
-                _uiManager.HPTxt.text = $"{_uiManager.charManager.Player.HP}/{_uiManager.charManager.Player.maxHP}";
+                _uiManager.HPbar.fillAmount = _uiManager.charManager.Player.HP / _uiManager.charManager.Player.MaxHP;
+                _uiManager.HPTxt.text = $"{(int)_uiManager.charManager.Player.HP}/{_uiManager.charManager.Player.MaxHP}";
+
                 break;
             case Stat.Dash:
                 _uiManager.DashBar.fillAmount = _uiManager.charManager.Player.Dash / _uiManager.charManager.Player.MaxDash;
-                _uiManager.DashTxt.text = $"{_uiManager.charManager.Player.Dash}/{_uiManager.charManager.Player.MaxDash}";
+                _uiManager.DashTxt.text = $"{(int)_uiManager.charManager.Player.Dash}/{_uiManager.charManager.Player.MaxDash}";
                 break;
         }
     }

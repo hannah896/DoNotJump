@@ -15,6 +15,7 @@ public class JumpPlatform : MonoBehaviour
     }
 
     float power = 5f;
+
     private void OnCollisionStay(Collision collision)
     {
         if (collision.gameObject.CompareTag("Player") &&

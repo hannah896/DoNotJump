@@ -12,11 +12,14 @@ public class PlayerController : MonoBehaviour
     //[Header("MoveInfo")]
     public float jumpPower;
     public float moveSpeed;
+    public float defaultSpeed;
+    public float runSpeed;
     [ShowInInspector, ReadOnly]
     private Vector2 moveInput;
     [ShowInInspector, ReadOnly]
     private Vector2 mouseDelta;
     public LayerMask groundLayer;
+
     #endregion
 
     #region 시야정보
@@ -56,8 +59,6 @@ public class PlayerController : MonoBehaviour
     //[Header("RayInfo")]
     private Vector2 mousePos;
     [ShowInInspector]
-    float rayLength = 0.1f;
-    [ShowInInspector]
     private Ray drawingRay;
     ItemObject item;
     #endregion
@@ -68,6 +69,8 @@ public class PlayerController : MonoBehaviour
     [ShowInInspector, ReadOnly]
     private Player _player;
     [ShowInInspector, ReadOnly]
+    private Collider _collider;
+    [ShowInInspector, ReadOnly]
     private CharacterManager manager;
     [ShowInInspector, ReadOnly]
     private PlayerCondition condition;
@@ -77,6 +80,7 @@ public class PlayerController : MonoBehaviour
     private void OnValidate()        
     {
         _rigidbody = GetComponent<Rigidbody>();
+        _collider = GetComponent<Collider>();
         playerCam = Camera.main;
         cameraContainer = playerCam.transform.parent;
         minXLook = -45f;
@@ -84,22 +88,25 @@ public class PlayerController : MonoBehaviour
         jumpPower = 1f;
         originGravity = new Vector3(0, -9.8f, 0);
         jumpGravity = originGravity * jumpPower;
+        defaultSpeed = 1f;
+        runSpeed = 3f;
     }
 
     private void Start()
     {
         manager = CharacterManager.Instance;
         uiManager = UIManager.Instance;
-        manager.Controller = this;
         _player = manager.Player;
+        condition = manager.Condition;
         //Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void Update()
     {
         playerState = manager.state;
-        playerVelocity = _rigidbody.GetPointVelocity(transform.position);
+        playerVelocity = _rigidbody.velocity;
         gravity = Physics.gravity.y;
+        uiManager.Display();
     }
 
     private void FixedUpdate()
@@ -108,13 +115,18 @@ public class PlayerController : MonoBehaviour
         if (IsGround())
         {
             //플레이어의 속도가 
-            if (Mathf.Abs(playerVelocity.x) > 0.3f || Mathf.Abs(playerVelocity.z) > 0.3f)
+            if (Mathf.Approximately(_rigidbody.velocity.x, 0f) || Mathf.Approximately(_rigidbody.velocity.z, 0f))
             {
-                manager.state = AnimationState.Walk;
+                manager.state = AnimationState.Idle;
+            }
+            else if (moveSpeed == runSpeed)
+            {
+                manager.state = AnimationState.Run;
+                Dash();
             }
             else
             {
-                manager.state = AnimationState.Idle;
+                manager.state = AnimationState.Walk;
             }
         }
     }
@@ -270,19 +282,38 @@ public class PlayerController : MonoBehaviour
         manager.Condition.UseItem(item.itemInfo);
         Destroy(item.gameObject);
     }
-
-    //대쉬
-    public void OnDash(InputAction.CallbackContext context)
+    
+    //달리기
+    private void Dash()
     {
         if (_player.Dash < 3f)
         {
             Debug.Log("나 파업. 못뛰어");
+            
             return;
         }
         else
         {
-            moveSpeed *= 3f;
-            condition.SetStat(Stat.Dash, -4);
+            moveSpeed = runSpeed;
+            condition.SetStat(Stat.Dash, -0.5f);
+        }
+    }
+    
+    //달리기 입력처리
+    public void OnDash(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Started)
+        {
+            if (_player.Dash < 0.5f)
+            {
+                Debug.Log("나 파업. 못뛰어");
+                return;
+            }
+            moveSpeed = runSpeed;
+        }
+        if (context.phase == InputActionPhase.Canceled)
+        {
+            moveSpeed = defaultSpeed;
         }
     }
     private void OnDrawGizmos()

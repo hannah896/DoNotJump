@@ -16,6 +16,7 @@ public class PlayerAnimationHandler : MonoBehaviour
 
     private int walk = Animator.StringToHash("isWalk");
     private int jump = Animator.StringToHash("Jump");
+    private int run = Animator.StringToHash("isDash");
 
     private void OnValidate()
     {
@@ -37,10 +38,16 @@ public class PlayerAnimationHandler : MonoBehaviour
                 break;
             case AnimationState.Walk:
                 animator.SetBool(walk, true);
+                animator.SetBool(run, false);
                 break;
             case AnimationState.Idle:
                 animator.SetBool(walk, false);
                 animator.SetBool(jump, false);
+                animator.SetBool(run, false);
+                break;
+            case AnimationState.Run:
+                animator.SetBool(run, true);
+                animator.SetBool(walk, true);
                 break;
         }
     }

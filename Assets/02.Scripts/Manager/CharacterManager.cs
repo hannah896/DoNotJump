@@ -13,11 +13,11 @@ public class CharacterManager : MonoBehaviour
     public AnimationState state;
 
     public Player Player
-    { get { return _player; } set { _player = value; } }
+    { get { return _player; } }
     public PlayerController Controller
-    { get { return _controller; } set { _controller = value; } }
+    { get { return _controller; } }
     public PlayerCondition Condition
-    { get { return _condition; } set { _condition = value; } }
+    { get { return _condition; } }
 
     public static CharacterManager Instance
     {
@@ -30,7 +30,12 @@ public class CharacterManager : MonoBehaviour
             return _instance;
         }
     }
-
+    private void OnValidate()
+    {
+        _controller = GetComponent<PlayerController>();
+        _condition = GetComponent<PlayerCondition>();
+        _player = GetComponent<Player>();
+    }
     private void Awake()
     {
         if (_instance == null)
