@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 mousePos;
     [ShowInInspector]
     private Ray drawingRay;
-    ItemObject item;
+    public ItemObject item;
     #endregion
 
     #region 잡다한거
@@ -106,7 +106,6 @@ public class PlayerController : MonoBehaviour
         playerState = manager.state;
         playerVelocity = _rigidbody.velocity;
         gravity = Physics.gravity.y;
-        uiManager.Display();
     }
 
     private void FixedUpdate()
@@ -248,11 +247,11 @@ public class PlayerController : MonoBehaviour
         
         if (Interact())
         {
-            uiManager.Display(item.itemInfo);
+            manager.isInteract = true;
         }
         else
         {
-            uiManager.Display();
+            manager.isInteract = false;
         }
     }
 
@@ -274,13 +273,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void Use()
+    {
+        manager.Condition.UseItem(item.itemInfo);
+        Destroy(item.gameObject);
+        item = null;
+        manager.isInteract = false;
+    }
+
     //아이템 사용
     public void OnUse(InputAction.CallbackContext context)
     {
         if (!Interact()) return;
-        Debug.Log(item.itemInfo);
-        manager.Condition.UseItem(item.itemInfo);
-        Destroy(item.gameObject);
+        Use();
     }
     
     //달리기
@@ -307,6 +312,7 @@ public class PlayerController : MonoBehaviour
             if (_player.Dash < 0.5f)
             {
                 Debug.Log("나 파업. 못뛰어");
+                moveSpeed = defaultSpeed;
                 return;
             }
             moveSpeed = runSpeed;

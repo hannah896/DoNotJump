@@ -12,6 +12,7 @@ public class CharacterManager : MonoBehaviour
 
     public AnimationState state;
 
+    public bool isInteract = false;
     public Player Player
     { get { return _player; } }
     public PlayerController Controller

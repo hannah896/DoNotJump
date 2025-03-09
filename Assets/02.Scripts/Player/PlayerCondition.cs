@@ -19,18 +19,15 @@ public class PlayerCondition : MonoBehaviour
         if (player.Dash < player.MaxDash)
         {
             if (curCoroutin != null) return;
-            Debug.Log("内风凭 矫累!");
             curCoroutin = StartCoroutine(Restore());
         }
         else
         {
             if (curCoroutin != null)
             {
-                Debug.Log("内风凭 场!");
                 StopCoroutine(curCoroutin);
                 curCoroutin = null;
             }
-            Debug.Log("内风凭 绝澜");
         }
     }
 
