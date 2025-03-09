@@ -9,7 +9,7 @@ public class JumpPlatform : MonoBehaviour
     Rigidbody rb;
     BoxCollider box;
 
-    private void Start()
+    private void OnValidate()
     {
         box = GetComponent<BoxCollider>();
     }

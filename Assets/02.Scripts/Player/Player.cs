@@ -9,15 +9,15 @@ public enum Stat
 }
 public class Player : MonoBehaviour
 {
-    public float maxHP;
-    public float HP;
-    public float maxDash;
-    public float Dash;
+    public float MaxHP { get {  return MaxHP; } private set { value = MaxHP; } }
+    public float HP { get { return HP; } private set { HP = value; } }
+    public float MaxDash { get { return MaxDash; } private set { MaxDash = value; } }
+    public float Dash { get { return Dash; } private set { Dash = value; } }
 
     private void Awake()
     {
-        maxHP = HP = 100;
-        maxDash = Dash = 100;
+        MaxHP = HP = 100;
+        MaxDash = Dash = 100;
     }
 
     private void Start()
@@ -31,12 +31,12 @@ public class Player : MonoBehaviour
         {
             case Stat.HP:
                 HP += value;
-                HP = Mathf.Min(HP, maxHP);
+                HP = Mathf.Min(HP, MaxHP);
                 break;
 
             case Stat.Dash:
                 Dash += value;
-                Dash = Mathf.Min(Dash, maxDash);
+                Dash = Mathf.Min(Dash, MaxDash);
                 break;
         }
     }

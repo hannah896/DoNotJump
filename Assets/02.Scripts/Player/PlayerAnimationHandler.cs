@@ -6,8 +6,10 @@ public enum AnimationState
 {
     Idle,
     Walk,
+    Run,
     Jump
 }
+
 public class PlayerAnimationHandler : MonoBehaviour
 {
     Animator animator;
@@ -15,7 +17,7 @@ public class PlayerAnimationHandler : MonoBehaviour
     private int walk = Animator.StringToHash("isWalk");
     private int jump = Animator.StringToHash("Jump");
 
-    private void Start()
+    private void OnValidate()
     {
         animator = GetComponent<Animator>();
     }

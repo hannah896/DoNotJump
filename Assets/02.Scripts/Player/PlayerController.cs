@@ -3,65 +3,101 @@ using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using VInspector;
 
 public class PlayerController : MonoBehaviour
 {
-    private Rigidbody _rigidbody;
-
-    [Header("MoveInfo")]
+    #region 움직임관련
+    [Foldout("MoveInfo"), ShowInInspector]
+    //[Header("MoveInfo")]
     public float jumpPower;
     public float moveSpeed;
+    [ShowInInspector, ReadOnly]
     private Vector2 moveInput;
+    [ShowInInspector, ReadOnly]
     private Vector2 mouseDelta;
     public LayerMask groundLayer;
+    #endregion
 
-    [Header("LookInfo")]
+    #region 시야정보
+    [Foldout("LookInfo"), ShowInInspector]
+    //[Header("LookInfo")]
     public Transform cameraContainer;
     public Camera playerCam;
+    [ShowInInspector]
     private float CamSensitivity = 0.1f; //민감도가 낮을수록 무빙이 느려짐
+    [ShowInInspector, ReadOnly]
     private float camRotX;
+    [ShowInInspector, ReadOnly]
     private float camRotY;
+    [ShowInInspector, ReadOnly]
     private float minXLook;
+    [ShowInInspector, ReadOnly]
     private float maxXLook;
+    
     public LayerMask InteractableLayer;
     Quaternion targetRot;
+    #endregion
 
-    [Header("PhysicsInfo")]
+    #region 물리정보
+    [Foldout("PhysicsInfo"), ShowInInspector]
+    //[Header("PhysicsInfo")]
     public AnimationState playerState;
     public Vector3 playerVelocity;
+    [ShowInInspector]
     private Vector3 originGravity;
+    [ShowInInspector]
     private Vector3 jumpGravity;
     public float gravity;
+    #endregion
 
-    [Header("RayInfo")]
+    #region 레이정보
+    [Foldout("RayInfo"), ShowInInspector]
+    //[Header("RayInfo")]
     private Vector2 mousePos;
+    [ShowInInspector]
     float rayLength = 0.1f;
+    [ShowInInspector]
     private Ray drawingRay;
     ItemObject item;
+    #endregion
 
-    private void Awake()
+    #region 잡다한거
+    [Foldout("Anything")]
+    private Rigidbody _rigidbody;
+    [ShowInInspector, ReadOnly]
+    private Player _player;
+    [ShowInInspector, ReadOnly]
+    private CharacterManager manager;
+    [ShowInInspector, ReadOnly]
+    private PlayerCondition condition;
+    [ShowInInspector, ReadOnly]
+    private UIManager uiManager;
+    #endregion
+    private void OnValidate()        
     {
+        _rigidbody = GetComponent<Rigidbody>();
+        playerCam = Camera.main;
+        cameraContainer = playerCam.transform.parent;
         minXLook = -45f;
         maxXLook = 45f;
         jumpPower = 1f;
-
         originGravity = new Vector3(0, -9.8f, 0);
         jumpGravity = originGravity * jumpPower;
     }
 
     private void Start()
     {
-        CharacterManager.Instance.Controller = this;
-        _rigidbody = GetComponent<Rigidbody>();
-        playerCam = Camera.main;
-        cameraContainer = playerCam.transform.parent;
-
+        manager = CharacterManager.Instance;
+        uiManager = UIManager.Instance;
+        manager.Controller = this;
+        _player = manager.Player;
         //Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void Update()
     {
-        playerState = CharacterManager.Instance.state;
+        playerState = manager.state;
         playerVelocity = _rigidbody.GetPointVelocity(transform.position);
         gravity = Physics.gravity.y;
     }
@@ -71,13 +107,14 @@ public class PlayerController : MonoBehaviour
         Move();
         if (IsGround())
         {
-            if (Mathf.Abs(playerVelocity.x) > 0.3f || Mathf.Abs(playerVelocity.z) > 0.1f)
+            //플레이어의 속도가 
+            if (Mathf.Abs(playerVelocity.x) > 0.3f || Mathf.Abs(playerVelocity.z) > 0.3f)
             {
-                CharacterManager.Instance.state = AnimationState.Walk;
+                manager.state = AnimationState.Walk;
             }
             else
             {
-                CharacterManager.Instance.state = AnimationState.Idle;
+                manager.state = AnimationState.Idle;
             }
         }
     }
@@ -154,38 +191,36 @@ public class PlayerController : MonoBehaviour
         {
             if(Physics.Raycast(rays[i], 0.05f, groundLayer))
             {
-                CharacterManager.Instance.state = AnimationState.Idle;
+                manager.state = AnimationState.Idle;
                 return true;
             }
         }
         Physics.gravity = originGravity;
-        CharacterManager.Instance.state = AnimationState.Jump;
+        manager.state = AnimationState.Jump;
         
         return false;
-    }   
+    }
 
-    // TODO : 임시카메라!!!! 나중에 꼭 수정할것
+    //TODO : 임시카메라!!!! 나중에 꼭 수정할것
     void CameraLook()
     {
         //카메라를 커서의 x만큼 회전시킨다.
         camRotX += mouseDelta.y * CamSensitivity; //y축을 회전해야 x가 회전함
         camRotX = Mathf.Clamp(camRotX, minXLook, maxXLook);
         cameraContainer.eulerAngles = new Vector3(-camRotX, 0, 0);
-         
+
         transform.eulerAngles += new Vector3(0, mouseDelta.x * CamSensitivity); //x축을 회전해야 y가 회전함
     }
 
-    ////뒷통수 카메라 회전
+    //뒷통수 카메라 회전
+
+    //
     //void CameraLook()
     //{
-    //    camRotX += mouseDelta.y * CamSensitivity;
-    //    camRotY += mouseDelta.x * CamSensitivity;
+    //    camRotX = mouseDelta.y * CamSensitivity;
+    //    camRotY = mouseDelta.x * CamSensitivity;
 
-    //    camRotX = Mathf.Clamp(camRotX, -90, 90);
-    //    camRotY = Mathf.Clamp(camRotY, -45, 45);
-    //    targetRot = Quaternion.Euler(-camRotX, camRotY, 0);
-    //    playerCam.transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, 0.5f);
-    //    playerCam.transform.parent.gameObject.transform.position = new Vector3(transform.position.x, 0, transform.position.z);
+    //    transform.eulerAngles = new Vector3(0, -camRotY, camRotX);
     //}
 
     //마우스 방향 받아오기
@@ -201,18 +236,18 @@ public class PlayerController : MonoBehaviour
         
         if (Interact())
         {
-            UIManager.Instance.Display(item.itemInfo);
+            uiManager.Display(item.itemInfo);
         }
         else
         {
-            UIManager.Instance.Display();
+            uiManager.Display();
         }
     }
 
     //상호작용하기
     private bool Interact()
     {
-        Ray ray = Camera.main.ScreenPointToRay(mousePos);
+        Ray ray = playerCam.ScreenPointToRay(mousePos);
         drawingRay = ray;
         RaycastHit hit;
 
@@ -232,10 +267,24 @@ public class PlayerController : MonoBehaviour
     {
         if (!Interact()) return;
         Debug.Log(item.itemInfo);
-        CharacterManager.Instance.Condition.UseItem(item.itemInfo);
+        manager.Condition.UseItem(item.itemInfo);
         Destroy(item.gameObject);
     }
 
+    //대쉬
+    public void OnDash(InputAction.CallbackContext context)
+    {
+        if (_player.Dash < 3f)
+        {
+            Debug.Log("나 파업. 못뛰어");
+            return;
+        }
+        else
+        {
+            moveSpeed *= 3f;
+            condition.SetStat(Stat.Dash, -4);
+        }
+    }
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red; // 기즈모 색상 설정
@@ -256,6 +305,7 @@ public class PlayerController : MonoBehaviour
         Gizmos.DrawLine(drawingRay.origin, drawingRay.origin + drawingRay.direction * 10f);
     }
 
+    //아래로 내려주는 거
     IEnumerator PushDown()
     {
         if (_rigidbody.velocity.y < 0.19f)

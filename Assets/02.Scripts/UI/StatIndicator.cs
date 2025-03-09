@@ -38,8 +38,8 @@ public class StatIndicator : MonoBehaviour
                 _uiManager.HPTxt.text = $"{_uiManager.charManager.Player.HP}/{_uiManager.charManager.Player.maxHP}";
                 break;
             case Stat.Dash:
-                _uiManager.DashBar.fillAmount = _uiManager.charManager.Player.Dash / _uiManager.charManager.Player.maxDash;
-                _uiManager.DashTxt.text = $"{_uiManager.charManager.Player.Dash}/{_uiManager.charManager.Player.maxDash}";
+                _uiManager.DashBar.fillAmount = _uiManager.charManager.Player.Dash / _uiManager.charManager.Player.MaxDash;
+                _uiManager.DashTxt.text = $"{_uiManager.charManager.Player.Dash}/{_uiManager.charManager.Player.MaxDash}";
                 break;
         }
     }
