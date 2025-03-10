@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using VInspector;
 
 public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -13,6 +14,9 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public TextMeshProUGUI amountTxt;
     //오브젝트
     public ItemInfo item;
+    //아이콘 마스크
+    [ShowInInspector]
+    Sprite mask;
     //마우스 올린 오브젝트
     public Outline outLine;
     //클릭
@@ -26,15 +30,11 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         outLine = GetComponent<Outline>();
         Icon = Utility.FindComponent<Image>(gameObject, "Icon");
-        if (Icon == null)
-        {
-            Debug.LogError("Icon 이미지가 할당되지 않음: " + gameObject.name);
-        }
         amountBG = transform.Find("amountBG").gameObject;
         amountTxt = amountBG.GetComponentInChildren<TextMeshProUGUI>();
         outLine.enabled = false;
+        mask = Icon.sprite;
         amount = 0;
-
         if (!TryGetComponent<Button>(out button))
         {
             button = gameObject.AddComponent<Button>();
@@ -93,13 +93,13 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         return true;              
     }
 
-    void Reset()
+    void ResetSlot()
     {
         amountBG.SetActive(false);
         amountTxt.text = string.Empty;
         item = null;
         outLine.enabled = false;
-        Icon = null;
+        Icon.sprite = mask;
         amount = 0;
     }
 
@@ -109,7 +109,7 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         amount--;
         if (amount == 0)
         {
-            Reset();
+            ResetSlot();
         }
     }
 
