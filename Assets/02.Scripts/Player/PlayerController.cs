@@ -3,6 +3,7 @@ using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using VInspector;
 
 public class PlayerController : MonoBehaviour
@@ -75,13 +76,15 @@ public class PlayerController : MonoBehaviour
     [ShowInInspector, ReadOnly]
     private PlayerCondition condition;
     [ShowInInspector, ReadOnly]
-    private UIManager uiManager;
+    private GameObject Inventory;
     #endregion
     private void OnValidate()        
     {
         _rigidbody = GetComponent<Rigidbody>();
         _collider = GetComponent<Collider>();
-        playerCam = Camera.main;
+        playerCam = GetComponentInChildren<Camera>();
+        _player = GetComponent<Player>();
+        condition = GetComponent <PlayerCondition>();
         cameraContainer = playerCam.transform.parent;
         minXLook = -45f;
         maxXLook = 45f;
@@ -90,15 +93,12 @@ public class PlayerController : MonoBehaviour
         jumpGravity = originGravity * jumpPower;
         defaultSpeed = 1f;
         runSpeed = 3f;
+        Inventory = FindObjectOfType<InventoryManager>().gameObject;
     }
 
     private void Start()
     {
         manager = CharacterManager.Instance;
-        uiManager = UIManager.Instance;
-        _player = manager.Player;
-        condition = manager.Condition;
-        //Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void Update()
@@ -176,8 +176,6 @@ public class PlayerController : MonoBehaviour
     //    jumpPower = 0.5f;
     //    _rigidbody.AddForce(10 * jumpPower * Vector3.up, ForceMode.Impulse);
     //}
-
-    //점프여부 받아오는 역할
 
     //점프 입력을 받아오는 역할
     public void OnJump(InputAction.CallbackContext context)
@@ -273,28 +271,59 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void Use()
-    {
-        manager.Condition.UseItem(item.itemInfo);
-        Destroy(item.gameObject);
-        item = null;
-        manager.isInteract = false;
-    }
-
     //아이템 사용
     public void OnUse(InputAction.CallbackContext context)
     {
         if (!Interact()) return;
         Use();
+        Disappear();
+    }
+
+    //효과적용
+    public void Use()
+    {
+        manager.Condition.UseItem(item.itemInfo);
+    }
+
+    //아이템 사라지게하는 처리
+    private void Disappear()
+    {
+        Destroy(item.gameObject);
+        item = null;
+        manager.isInteract = false;
+    }
+
+
+    //인벤토리 열기/닫기
+    public void OnInventory(InputAction.CallbackContext context)
+    {
+        if (!Inventory.activeSelf)
+        {
+            Time.timeScale = 0f;
+            Inventory.SetActive(true);
+        }
+        else
+        {
+            Time.timeScale = 1f;
+            Inventory.SetActive(false);
+        }
     }
     
+    //아이템 줍기
+    public void Pick()
+    {
+        if (!Interact()) return;
+        InventoryManager.Instance.Input(item);
+        Disappear();
+    }
+
     //달리기
     private void Dash()
     {
         if (_player.Dash < 3f)
         {
             Debug.Log("나 파업. 못뛰어");
-            
+
             return;
         }
         else
@@ -303,7 +332,7 @@ public class PlayerController : MonoBehaviour
             condition.SetStat(Stat.Dash, -0.5f);
         }
     }
-    
+
     //달리기 입력처리
     public void OnDash(InputAction.CallbackContext context)
     {
@@ -322,6 +351,7 @@ public class PlayerController : MonoBehaviour
             moveSpeed = defaultSpeed;
         }
     }
+    //레이 시각화
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red; // 기즈모 색상 설정
@@ -356,4 +386,6 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
     }
+
+    
 }
