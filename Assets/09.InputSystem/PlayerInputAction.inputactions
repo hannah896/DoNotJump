@@ -9,13 +9,22 @@
                     "name": "Move",
                     "type": "Value",
                     "id": "fb076e8b-6d59-4ab6-9608-46eaa56fbea5",
-                    "expectedControlType": "Vector2",
+                    "expectedControlType": "Axis",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Jump",
+                    "name": "Jump_1",
+                    "type": "Button",
+                    "id": "1dc87794-1875-4e6b-aed9-1b7a1beeb1da",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Jump_2",
                     "type": "Button",
                     "id": "67556277-fd2e-45f4-8884-a2d413390bee",
                     "expectedControlType": "Button",
@@ -64,6 +73,33 @@
                     "type": "Value",
                     "id": "95993a59-c91a-4fea-b7f8-32d996988acc",
                     "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Pick",
+                    "type": "Button",
+                    "id": "9f9f5a88-e972-45d5-b7d9-aba6a5fd9d96",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Inventory",
+                    "type": "Button",
+                    "id": "47619cef-3ce6-46c8-adfa-5c7c4cc66f51",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Rotate",
+                    "type": "Value",
+                    "id": "67c39ad8-be93-4429-be07-d17a0cda256d",
+                    "expectedControlType": "Axis",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
@@ -132,7 +168,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Jump",
+                    "action": "Jump_2",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
@@ -143,7 +179,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Jump",
+                    "action": "Jump_2",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -154,7 +190,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Jump",
+                    "action": "Jump_2",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -212,6 +248,72 @@
                     "action": "Dash",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "842b3a86-b0f4-4c50-9749-61a339fb6c82",
+                    "path": "<Keyboard>/g",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "52067518-99b2-49ea-91f2-4060093ea866",
+                    "path": "<Keyboard>/i",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Inventory",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ec43d7dd-d222-4b4f-bd95-2e1521cec262",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump_1",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "1D Axis",
+                    "id": "648b7c45-4b5e-4a73-829b-39651559c7a1",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Rotate",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "positive",
+                    "id": "adabcf27-82e8-4c74-896c-957dc34f8959",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Rotate",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "negative",
+                    "id": "7119cb45-b283-4b0e-8bb1-d8198dd2914f",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Rotate",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 }
             ]
         }

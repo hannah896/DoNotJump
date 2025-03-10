@@ -30,13 +30,13 @@ public class StatIndicator : MonoBehaviour
         switch (stat)
         {
             case Stat.HP:
-                _uiManager.HPbar.fillAmount = _uiManager.charManager.Player.HP / _uiManager.charManager.Player.MaxHP;
-                _uiManager.HPTxt.text = $"{(int)_uiManager.charManager.Player.HP}/{_uiManager.charManager.Player.MaxHP}";
+                _uiManager.HPbar.fillAmount = _uiManager.manager.Player.HP / _uiManager.manager.Player.MaxHP;
+                _uiManager.HPTxt.text = $"{(int)_uiManager.manager.Player.HP}/{_uiManager.manager.Player.MaxHP}";
 
                 break;
             case Stat.Dash:
-                _uiManager.DashBar.fillAmount = _uiManager.charManager.Player.Dash / _uiManager.charManager.Player.MaxDash;
-                _uiManager.DashTxt.text = $"{(int)_uiManager.charManager.Player.Dash}/{_uiManager.charManager.Player.MaxDash}";
+                _uiManager.DashBar.fillAmount = _uiManager.manager.Player.Dash / _uiManager.manager.Player.MaxDash;
+                _uiManager.DashTxt.text = $"{(int)_uiManager.manager.Player.Dash}/{_uiManager.manager.Player.MaxDash}";
                 break;
         }
     }

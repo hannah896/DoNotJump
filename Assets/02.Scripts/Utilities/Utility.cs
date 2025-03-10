@@ -15,7 +15,6 @@ public class Utility
         {
             if (component.name.Equals(name))
             {
-                Debug.Log("Ã£¾Òµð!!!!");
                 return component;
             }
         }

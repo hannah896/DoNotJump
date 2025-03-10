@@ -3,6 +3,7 @@ using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using VInspector;
 
 public class PlayerController : MonoBehaviour
@@ -60,7 +61,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 mousePos;
     [ShowInInspector]
     private Ray drawingRay;
-    ItemObject item;
+    public ItemObject item;
     #endregion
 
     #region 잡다한거
@@ -75,13 +76,25 @@ public class PlayerController : MonoBehaviour
     [ShowInInspector, ReadOnly]
     private PlayerCondition condition;
     [ShowInInspector, ReadOnly]
-    private UIManager uiManager;
+    private GameObject Inventory;
     #endregion
+
+    [Header("CameraRot"), ShowInInspector, ReadOnly]
+    public Transform target;
+    public float r;
+    public float speed = 35f;
+    private float playerCameraAngle;
+    private float CamDir;
+    private bool isRot;
+
+    [ShowInInspector, ReadOnly]
+
     private void OnValidate()        
     {
         _rigidbody = GetComponent<Rigidbody>();
         _collider = GetComponent<Collider>();
-        playerCam = Camera.main;
+        _player = GetComponent<Player>();
+        condition = GetComponent <PlayerCondition>();
         cameraContainer = playerCam.transform.parent;
         minXLook = -45f;
         maxXLook = 45f;
@@ -90,15 +103,18 @@ public class PlayerController : MonoBehaviour
         jumpGravity = originGravity * jumpPower;
         defaultSpeed = 1f;
         runSpeed = 3f;
+        Inventory = FindObjectOfType<InventoryManager>().gameObject;
+    }
+
+    private void Awake()
+    {
+        r = new Vector2(playerCam.transform.position.x - transform.position.x, playerCam.transform.position.z - transform.position.z).magnitude;
+        playerCameraAngle = 0;
     }
 
     private void Start()
     {
         manager = CharacterManager.Instance;
-        uiManager = UIManager.Instance;
-        _player = manager.Player;
-        condition = manager.Condition;
-        //Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void Update()
@@ -106,7 +122,6 @@ public class PlayerController : MonoBehaviour
         playerState = manager.state;
         playerVelocity = _rigidbody.velocity;
         gravity = Physics.gravity.y;
-        uiManager.Display();
     }
 
     private void FixedUpdate()
@@ -134,6 +149,30 @@ public class PlayerController : MonoBehaviour
     private void LateUpdate()
     {
         CameraLook();
+        if (Input.GetKey(KeyCode.Q))
+        {
+            playerCameraAngle += Time.deltaTime * 50;
+        }
+        else if (Input.GetKey(KeyCode.E))
+        {
+            playerCameraAngle -= Time.deltaTime * 50;
+        }
+        GetAngle();
+    }
+
+    private void GetAngle()
+    {
+        playerCameraAngle = playerCameraAngle % 360;
+        Quaternion rotation = Quaternion.AngleAxis(playerCameraAngle, Vector3.up);
+        Vector3 direction = rotation * Vector3.forward;
+        Vector3 result = direction * 2 + Vector3.up * 1;
+        Vector3 cameraPosition = transform.position + result;
+        playerCam.transform.position = cameraPosition;
+
+        playerCam.transform.LookAt(transform);
+        Vector3 euler = playerCam.transform.eulerAngles;
+        euler.x -= 20f; // 원하는 만큼 X축 회전 감소
+        playerCam.transform.rotation = Quaternion.Euler(euler);
     }
 
     //움직임 구현
@@ -171,17 +210,23 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(PushDown());
     }
 
-    //// 슈퍼 점프
-    //private void SuperJump() 
-    //{
-    //    jumpPower = 0.5f;
-    //    _rigidbody.AddForce(10 * jumpPower * Vector3.up, ForceMode.Impulse);
-    //}
-
-    //점프여부 받아오는 역할
+    // 슈퍼 점프
+    private void SuperJump()
+    {
+        _rigidbody.AddForce(10 * jumpPower * Vector3.up, ForceMode.Impulse);
+    }
 
     //점프 입력을 받아오는 역할
-    public void OnJump(InputAction.CallbackContext context)
+    public void OnJump1(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Started && IsGround())
+        {
+            SuperJump();
+        }
+    }
+
+    //점프 입력을 받아오는 역할
+    public void OnJump2(InputAction.CallbackContext context)
     {
         if(context.phase == InputActionPhase.Started && IsGround())
         {
@@ -213,7 +258,6 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
-    //TODO : 임시카메라!!!! 나중에 꼭 수정할것
     void CameraLook()
     {
         //카메라를 커서의 x만큼 회전시킨다.
@@ -224,16 +268,37 @@ public class PlayerController : MonoBehaviour
         transform.eulerAngles += new Vector3(0, mouseDelta.x * CamSensitivity); //x축을 회전해야 y가 회전함
     }
 
-    //뒷통수 카메라 회전
+    //원형카메라 회전
+    void CameraRot()
+    {
+        //360도  ssssss
+        playerCameraAngle %= 360;
+        Quaternion rotation = Quaternion.AngleAxis(playerCameraAngle, Vector3.up);
+        //현재 기준축은 z임
+        Vector3 dir = rotation * Vector3.forward;
+        Vector3 result = dir * r + Vector3.up * playerCam.transform.position.y;
+        Vector3 cameraPosition = transform.position + result;
+        playerCam.transform.LookAt(transform);
 
-    //
-    //void CameraLook()
-    //{
-    //    camRotX = mouseDelta.y * CamSensitivity;
-    //    camRotY = mouseDelta.x * CamSensitivity;
+        Vector3 euler = playerCam.transform.eulerAngles;
+        euler.x -= 20f; // 원하는 만큼 X축 회전 감소 = 카메라 각도조절
+        playerCam.transform.rotation = Quaternion.Euler(euler);
+    }
 
-    //    transform.eulerAngles = new Vector3(0, -camRotY, camRotX);
-    //}
+    public void OnCameraRot(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Performed)
+        {
+            isRot = true;
+            Debug.Log("빙빙 돌아가는 회전목마처럼");
+            playerCameraAngle *= context.ReadValue<float>();
+            
+        }
+        else if(context.phase == InputActionPhase.Canceled)
+        {
+            isRot = false;
+        }
+    }
 
     //마우스 방향 받아오기
     public void OnLook(InputAction.CallbackContext context)
@@ -248,11 +313,11 @@ public class PlayerController : MonoBehaviour
         
         if (Interact())
         {
-            uiManager.Display(item.itemInfo);
+            manager.isInteract = true;
         }
         else
         {
-            uiManager.Display();
+            manager.isInteract = false;
         }
     }
 
@@ -278,18 +343,62 @@ public class PlayerController : MonoBehaviour
     public void OnUse(InputAction.CallbackContext context)
     {
         if (!Interact()) return;
-        Debug.Log(item.itemInfo);
-        manager.Condition.UseItem(item.itemInfo);
+        Use();
+        Disappear();
+    }
+
+    //효과적용
+    public void Use()
+    {
+        item.Buff();
+    }
+
+    //아이템 사라지게하는 처리
+    private void Disappear()
+    {
         Destroy(item.gameObject);
+        item = null;
+        manager.isInteract = false;
+    }
+
+
+    //인벤토리 열기/닫기
+    public void OnInventory(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Started)
+        {
+            Debug.Log("가방열기");
+            if (!Inventory.activeSelf)
+            {
+                Inventory.SetActive(true);
+            }
+            else
+            {
+                Inventory.SetActive(false);
+            }
+        }
     }
     
+    //아이템 줍기
+    public void OnPick(InputAction.CallbackContext context)
+    {
+        Debug.Log("아이템 주울까");
+        if (context.phase == InputActionPhase.Started)
+        {
+            if (!manager.isInteract) return;
+            Debug.Log("아이템 줍는중");
+            InventoryManager.Instance.Input(item);
+            Disappear();
+        }
+    }
+
     //달리기
     private void Dash()
     {
         if (_player.Dash < 3f)
         {
             Debug.Log("나 파업. 못뛰어");
-            
+
             return;
         }
         else
@@ -298,7 +407,7 @@ public class PlayerController : MonoBehaviour
             condition.SetStat(Stat.Dash, -0.5f);
         }
     }
-    
+
     //달리기 입력처리
     public void OnDash(InputAction.CallbackContext context)
     {
@@ -307,6 +416,7 @@ public class PlayerController : MonoBehaviour
             if (_player.Dash < 0.5f)
             {
                 Debug.Log("나 파업. 못뛰어");
+                moveSpeed = defaultSpeed;
                 return;
             }
             moveSpeed = runSpeed;
@@ -316,6 +426,7 @@ public class PlayerController : MonoBehaviour
             moveSpeed = defaultSpeed;
         }
     }
+    //레이 시각화
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red; // 기즈모 색상 설정
