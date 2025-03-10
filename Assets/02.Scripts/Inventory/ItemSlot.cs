@@ -25,6 +25,8 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public int SlotIndex;
     public int amount;
 
+    private Color color;
+
 
     private void OnValidate()
     {
@@ -33,12 +35,12 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         amountBG = transform.Find("amountBG").gameObject;
         amountTxt = amountBG.GetComponentInChildren<TextMeshProUGUI>();
         outLine.enabled = false;
-        mask = Icon.sprite;
         amount = 0;
         if (!TryGetComponent<Button>(out button))
         {
             button = gameObject.AddComponent<Button>();
         }
+        color = Icon.color;
     }
 
     public void Awake()
@@ -85,6 +87,8 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
         item = obj.itemInfo;
         Icon.sprite = item.Icon;
+        color.a = 100;
+        Icon.color = color;
 
         amount += 1;
         amountTxt.text = amount.ToString();
@@ -99,7 +103,8 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         amountTxt.text = string.Empty;
         item = null;
         outLine.enabled = false;
-        Icon.sprite = mask;
+        color.a = 0;
+        Icon.color = color;
         amount = 0;
     }
 

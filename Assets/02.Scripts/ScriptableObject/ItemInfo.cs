@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu]
+[CreateAssetMenu (fileName = "ItemInfo")]
 public class ItemInfo : ScriptableObject
 {
     //이름과 설명, 아이콘, 갯수
