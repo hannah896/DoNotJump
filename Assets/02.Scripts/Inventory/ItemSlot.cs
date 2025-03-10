@@ -12,7 +12,7 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public GameObject amountBG;
     public TextMeshProUGUI amountTxt;
     //오브젝트
-    public ItemObject itemObject;
+    public ItemInfo item;
     //마우스 올린 오브젝트
     public Outline outLine;
     //클릭
@@ -26,8 +26,12 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         outLine = GetComponent<Outline>();
         Icon = Utility.FindComponent<Image>(gameObject, "Icon");
+        if (Icon == null)
+        {
+            Debug.LogError("Icon 이미지가 할당되지 않음: " + gameObject.name);
+        }
         amountBG = transform.Find("amountBG").gameObject;
-        amountTxt = amountBG.GetComponent<TextMeshProUGUI>();
+        amountTxt = amountBG.GetComponentInChildren<TextMeshProUGUI>();
         outLine.enabled = false;
         amount = 0;
 
@@ -46,27 +50,29 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public void OnPointerEnter(PointerEventData eventData)
     {
         outLine.enabled = true;
+        if (item == null) return;
         InventoryManager.Instance.ShowInfo(SlotIndex);
-        InventoryManager.Instance.selectedItemName.text = itemObject.itemInfo._name;
-        InventoryManager.Instance.selectedItemDescription.text = string.Empty;
+        InventoryManager.Instance.selectedItemName.text = item._name;
+        InventoryManager.Instance.selectedItemDescription.text = item.description;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         outLine.enabled = false;
+        if (item == null) return;
         InventoryManager.Instance.CloseInfo();
     }
 
     public void OnClick()
     {
-        if (itemObject == null) return;
+        if (item == null) return;
         UseItem();
     }
     public bool Input(ItemObject obj)
     {
-        if (itemObject != null)
+        if (item != null)
         {
-            if (itemObject.itemInfo._name.Equals(obj.itemInfo.name))
+            if (item._name.Equals(obj.itemInfo._name))
             {
                 amount++;
                 return true;
@@ -77,18 +83,38 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             }
         }
 
-        itemObject = obj;
-        Icon.sprite = itemObject.itemInfo.Icon;
+        item = obj.itemInfo;
+        Icon.sprite = item.Icon;
+
         amount += 1;
         amountTxt.text = amount.ToString();
-        return true;
+
+        amountBG.SetActive(true);
+        return true;              
+    }
+
+    void Reset()
+    {
+        amountBG.SetActive(false);
+        amountTxt.text = string.Empty;
+        item = null;
+        outLine.enabled = false;
+        Icon = null;
+        amount = 0;
     }
 
     public void UseItem()
     {
-        if (itemObject == null) return;
+        if (item == null) return;
         amount--;
         if (amount == 0)
-        CharacterManager.Instance.Controller.Use();
+        {
+            Reset();
+        }
+    }
+
+    private void OnDisable()
+    {
+        outLine.enabled = false;
     }
 }

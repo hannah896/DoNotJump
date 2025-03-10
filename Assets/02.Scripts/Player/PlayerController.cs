@@ -170,21 +170,32 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(PushDown());
     }
 
-    //// 슈퍼 점프
-    //private void SuperJump() 
-    //{
-    //    jumpPower = 0.5f;
-    //    _rigidbody.AddForce(10 * jumpPower * Vector3.up, ForceMode.Impulse);
-    //}
+    // 슈퍼 점프
+    private void SuperJump()
+    {
+        _rigidbody.AddForce(10 * jumpPower * Vector3.up, ForceMode.Impulse);
+    }
 
     //점프 입력을 받아오는 역할
-    public void OnJump(InputAction.CallbackContext context)
+    public void OnJump1(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Started && IsGround())
+        {
+            SuperJump();
+        }
+    }
+
+    //점프 입력을 받아오는 역할
+    public void OnJump2(InputAction.CallbackContext context)
     {
         if(context.phase == InputActionPhase.Started && IsGround())
         {
             Jump(jumpPower);
         }
     }
+
+
+
 
     bool IsGround()
     {
@@ -297,24 +308,31 @@ public class PlayerController : MonoBehaviour
     //인벤토리 열기/닫기
     public void OnInventory(InputAction.CallbackContext context)
     {
-        if (!Inventory.activeSelf)
+        if (context.phase == InputActionPhase.Started)
         {
-            Time.timeScale = 0f;
-            Inventory.SetActive(true);
-        }
-        else
-        {
-            Time.timeScale = 1f;
-            Inventory.SetActive(false);
+            Debug.Log("가방열기");
+            if (!Inventory.activeSelf)
+            {
+                Inventory.SetActive(true);
+            }
+            else
+            {
+                Inventory.SetActive(false);
+            }
         }
     }
     
     //아이템 줍기
-    public void Pick()
+    public void OnPick(InputAction.CallbackContext context)
     {
-        if (!Interact()) return;
-        InventoryManager.Instance.Input(item);
-        Disappear();
+        Debug.Log("아이템 주울까");
+        if (context.phase == InputActionPhase.Started)
+        {
+            if (!manager.isInteract) return;
+            Debug.Log("아이템 줍는중");
+            InventoryManager.Instance.Input(item);
+            Disappear();
+        }
     }
 
     //달리기

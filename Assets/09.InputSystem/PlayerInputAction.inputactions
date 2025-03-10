@@ -15,7 +15,16 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Jump",
+                    "name": "Jump_1",
+                    "type": "Button",
+                    "id": "1dc87794-1875-4e6b-aed9-1b7a1beeb1da",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Jump_2",
                     "type": "Button",
                     "id": "67556277-fd2e-45f4-8884-a2d413390bee",
                     "expectedControlType": "Button",
@@ -150,7 +159,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Jump",
+                    "action": "Jump_2",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
@@ -161,7 +170,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Jump",
+                    "action": "Jump_2",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -172,7 +181,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Jump",
+                    "action": "Jump_2",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -245,11 +254,22 @@
                 {
                     "name": "",
                     "id": "52067518-99b2-49ea-91f2-4060093ea866",
-                    "path": "<Keyboard>/p",
+                    "path": "<Keyboard>/i",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Inventory",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ec43d7dd-d222-4b4f-bd95-2e1521cec262",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump_1",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

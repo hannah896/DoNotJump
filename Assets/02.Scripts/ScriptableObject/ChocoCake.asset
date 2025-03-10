@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f406ae64e9173504a95c710f81afd7ee, type: 3}
   m_Name: ChocoCake
   m_EditorClassIdentifier: 
-  _name: "\uCABC\uAF2C\uB81B \uCEF5\uCF00\uC774\uD06C"
+  _name: Chococake
   description: "\uB625\uC77C\uC9C0\uB3C4 \uBAA8\uB985\uB2C8\uB2E4..."
+  Icon: {fileID: 21300000, guid: 7648febb025eab94ab953374c0f253eb, type: 3}
   stat: 0
   value: -20

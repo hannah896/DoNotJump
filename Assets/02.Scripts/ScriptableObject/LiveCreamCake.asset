@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f406ae64e9173504a95c710f81afd7ee, type: 3}
   m_Name: LiveCreamCake
   m_EditorClassIdentifier: 
-  _name: "\u751F\uD06C\uB9BC\uCF00\uC774\uD06C"
+  _name: LiveCreamCake
   description: "\uC0B4\uC544\uC788\uB294 \uB4EF \uD569\uB2C8\uB2E4.."
+  Icon: {fileID: 21300000, guid: b6c4318d137ba484fa9bf27288b25160, type: 3}
   stat: 0
   value: 20
