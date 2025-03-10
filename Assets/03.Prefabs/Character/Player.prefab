@@ -196,7 +196,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 759359817550069650}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -9.584, y: 1.3, z: 42.94}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -323,7 +323,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 7833557835675932490}
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: OnJump
+        m_MethodName: OnJump2
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -417,13 +417,13 @@ MonoBehaviour:
     m_ActionName: PlayerMove/Dash[/Keyboard/shift]
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 759359817550069650}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
-        m_Mode: 1
+      - m_Target: {fileID: 7833557835675932490}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnPick
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -433,13 +433,13 @@ MonoBehaviour:
     m_ActionName: PlayerMove/Pick[/Keyboard/g]
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 759359817550069650}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
-        m_Mode: 1
+      - m_Target: {fileID: 7833557835675932490}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnInventory
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -447,6 +447,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 47619cef-3ce6-46c8-adfa-5c7c4cc66f51
     m_ActionName: PlayerMove/Inventory[/Keyboard/p]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7833557835675932490}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnJump1
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 1dc87794-1875-4e6b-aed9-1b7a1beeb1da
+    m_ActionName: PlayerMove/Jump_1[/Keyboard/space]
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: 
   m_DefaultActionMap: PlayerMove
@@ -464,6 +480,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1dc1e01660cc8d94da9f6ea0c754f29e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Choco: {fileID: 4974101888286465141}
+  Straw: {fileID: 745235068576920805}
   state: 0
   isInteract: 0
 --- !u!114 &7833557835675932490
@@ -1033,12 +1051,12 @@ GameObject:
   - component: {fileID: 3700935445341468295}
   - component: {fileID: 5083038002350398391}
   m_Layer: 0
-  m_Name: StrawberrySpongeCake
+  m_Name: Choco
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1455159050266748457
 Transform:
   m_ObjectHideFlags: 0
@@ -1752,6 +1770,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1865909467409857643}
+  - {fileID: 80022405434617439}
   m_Father: {fileID: 3395767477042871813}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9213065201857033213
@@ -1788,3 +1807,88 @@ Transform:
   - {fileID: 409955753819435572}
   m_Father: {fileID: 475795770448702846}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &8795127175310810575
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7443739550307624340}
+    m_Modifications:
+    - target: {fileID: 8095513665970235690, guid: a3cf0d4fbe05dde4088537c84ab651b6,
+        type: 3}
+      propertyPath: m_Name
+      value: Straw
+      objectReference: {fileID: 0}
+    - target: {fileID: 8095513665970235690, guid: a3cf0d4fbe05dde4088537c84ab651b6,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8868390743921243024, guid: a3cf0d4fbe05dde4088537c84ab651b6,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8868390743921243024, guid: a3cf0d4fbe05dde4088537c84ab651b6,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.113
+      objectReference: {fileID: 0}
+    - target: {fileID: 8868390743921243024, guid: a3cf0d4fbe05dde4088537c84ab651b6,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.005
+      objectReference: {fileID: 0}
+    - target: {fileID: 8868390743921243024, guid: a3cf0d4fbe05dde4088537c84ab651b6,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.64085644
+      objectReference: {fileID: 0}
+    - target: {fileID: 8868390743921243024, guid: a3cf0d4fbe05dde4088537c84ab651b6,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.29883623
+      objectReference: {fileID: 0}
+    - target: {fileID: 8868390743921243024, guid: a3cf0d4fbe05dde4088537c84ab651b6,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.64085644
+      objectReference: {fileID: 0}
+    - target: {fileID: 8868390743921243024, guid: a3cf0d4fbe05dde4088537c84ab651b6,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.29883623
+      objectReference: {fileID: 0}
+    - target: {fileID: 8868390743921243024, guid: a3cf0d4fbe05dde4088537c84ab651b6,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8868390743921243024, guid: a3cf0d4fbe05dde4088537c84ab651b6,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 8868390743921243024, guid: a3cf0d4fbe05dde4088537c84ab651b6,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -50
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a3cf0d4fbe05dde4088537c84ab651b6, type: 3}
+--- !u!4 &80022405434617439 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8868390743921243024, guid: a3cf0d4fbe05dde4088537c84ab651b6,
+    type: 3}
+  m_PrefabInstance: {fileID: 8795127175310810575}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &745235068576920805 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8095513665970235690, guid: a3cf0d4fbe05dde4088537c84ab651b6,
+    type: 3}
+  m_PrefabInstance: {fileID: 8795127175310810575}
+  m_PrefabAsset: {fileID: 0}

@@ -78,11 +78,21 @@ public class PlayerController : MonoBehaviour
     [ShowInInspector, ReadOnly]
     private GameObject Inventory;
     #endregion
+
+    [Header("CameraRot"), ShowInInspector, ReadOnly]
+    public Transform target;
+    public float r;
+    public float speed = 35f;
+    private float playerCameraAngle;
+    private float CamDir;
+    private bool isRot;
+
+    [ShowInInspector, ReadOnly]
+
     private void OnValidate()        
     {
         _rigidbody = GetComponent<Rigidbody>();
         _collider = GetComponent<Collider>();
-        playerCam = GetComponentInChildren<Camera>();
         _player = GetComponent<Player>();
         condition = GetComponent <PlayerCondition>();
         cameraContainer = playerCam.transform.parent;
@@ -94,6 +104,12 @@ public class PlayerController : MonoBehaviour
         defaultSpeed = 1f;
         runSpeed = 3f;
         Inventory = FindObjectOfType<InventoryManager>().gameObject;
+    }
+
+    private void Awake()
+    {
+        r = new Vector2(playerCam.transform.position.x - transform.position.x, playerCam.transform.position.z - transform.position.z).magnitude;
+        playerCameraAngle = 0;
     }
 
     private void Start()
@@ -133,6 +149,30 @@ public class PlayerController : MonoBehaviour
     private void LateUpdate()
     {
         CameraLook();
+        if (Input.GetKey(KeyCode.Q))
+        {
+            playerCameraAngle += Time.deltaTime * 50;
+        }
+        else if (Input.GetKey(KeyCode.E))
+        {
+            playerCameraAngle -= Time.deltaTime * 50;
+        }
+        GetAngle();
+    }
+
+    private void GetAngle()
+    {
+        playerCameraAngle = playerCameraAngle % 360;
+        Quaternion rotation = Quaternion.AngleAxis(playerCameraAngle, Vector3.up);
+        Vector3 direction = rotation * Vector3.forward;
+        Vector3 result = direction * 2 + Vector3.up * 1;
+        Vector3 cameraPosition = transform.position + result;
+        playerCam.transform.position = cameraPosition;
+
+        playerCam.transform.LookAt(transform);
+        Vector3 euler = playerCam.transform.eulerAngles;
+        euler.x -= 20f; // 원하는 만큼 X축 회전 감소
+        playerCam.transform.rotation = Quaternion.Euler(euler);
     }
 
     //움직임 구현
@@ -218,7 +258,6 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
-    //TODO : 임시카메라!!!! 나중에 꼭 수정할것
     void CameraLook()
     {
         //카메라를 커서의 x만큼 회전시킨다.
@@ -229,16 +268,37 @@ public class PlayerController : MonoBehaviour
         transform.eulerAngles += new Vector3(0, mouseDelta.x * CamSensitivity); //x축을 회전해야 y가 회전함
     }
 
-    //뒷통수 카메라 회전
+    //원형카메라 회전
+    void CameraRot()
+    {
+        //360도  ssssss
+        playerCameraAngle %= 360;
+        Quaternion rotation = Quaternion.AngleAxis(playerCameraAngle, Vector3.up);
+        //현재 기준축은 z임
+        Vector3 dir = rotation * Vector3.forward;
+        Vector3 result = dir * r + Vector3.up * playerCam.transform.position.y;
+        Vector3 cameraPosition = transform.position + result;
+        playerCam.transform.LookAt(transform);
 
-    //
-    //void CameraLook()
-    //{
-    //    camRotX = mouseDelta.y * CamSensitivity;
-    //    camRotY = mouseDelta.x * CamSensitivity;
+        Vector3 euler = playerCam.transform.eulerAngles;
+        euler.x -= 20f; // 원하는 만큼 X축 회전 감소 = 카메라 각도조절
+        playerCam.transform.rotation = Quaternion.Euler(euler);
+    }
 
-    //    transform.eulerAngles = new Vector3(0, -camRotY, camRotX);
-    //}
+    public void OnCameraRot(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Performed)
+        {
+            isRot = true;
+            Debug.Log("빙빙 돌아가는 회전목마처럼");
+            playerCameraAngle *= context.ReadValue<float>();
+            
+        }
+        else if(context.phase == InputActionPhase.Canceled)
+        {
+            isRot = false;
+        }
+    }
 
     //마우스 방향 받아오기
     public void OnLook(InputAction.CallbackContext context)
@@ -290,7 +350,7 @@ public class PlayerController : MonoBehaviour
     //효과적용
     public void Use()
     {
-        manager.Condition.UseItem(item.itemInfo);
+        item.Buff();
     }
 
     //아이템 사라지게하는 처리

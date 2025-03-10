@@ -3,25 +3,37 @@ using System.Collections.Generic;
 using UnityEngine;
 public enum ItemType
 {
-    Food,
-    Object
+    Choco,
+    Straw
 }
 public class ItemObject : MonoBehaviour
 {
     public ItemInfo itemInfo;
     ItemType type;
 
-    //public void Buf()
-    //{
-    //    switch (type)
-    //    {
-    //        case ItemType.Food:
+    GameObject cake;
 
-    //    }
-    //}
+    public void Buff()
+    {
+        Debug.Log("아이템버프!!");
+        HoldingCupCake(itemInfo.time);
+        StartCoroutine(CharacterManager.Instance.Condition.Buff(itemInfo.stat, itemInfo.time, itemInfo.value));
+    }
 
-    //IEnumerator void HoldingCupCake()
-    //{
-    //    CharacterManager.Instance.transform.Find("");
-    //}
+    IEnumerator HoldingCupCake(float time)
+    {
+        switch (type) 
+        {
+            case ItemType.Choco:
+                cake = CharacterManager.Instance.Choco;
+                break;
+            case ItemType.Straw:
+                cake = CharacterManager.Instance.Straw;
+                break;
+        }
+
+        cake.SetActive(true);
+        yield return new WaitForSeconds(time);
+        cake.SetActive(false);
+    }
 }
