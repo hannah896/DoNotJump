@@ -10,6 +10,7 @@ public class ItemInfo : ScriptableObject
 
     //효과
     public Stat stat;
+    public ItemType type;
 
     //초당 회복량 
     public float value;

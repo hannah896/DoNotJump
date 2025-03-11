@@ -13,7 +13,7 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public GameObject amountBG;
     public TextMeshProUGUI amountTxt;
     //오브젝트
-    public ItemInfo item;
+    public ItemObject item;
     //아이콘 마스크
     [ShowInInspector]
     Sprite mask;
@@ -54,8 +54,8 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         outLine.enabled = true;
         if (item == null) return;
         InventoryManager.Instance.ShowInfo(SlotIndex);
-        InventoryManager.Instance.selectedItemName.text = item._name;
-        InventoryManager.Instance.selectedItemDescription.text = item.description;
+        InventoryManager.Instance.selectedItemName.text = item.itemInfo._name;
+        InventoryManager.Instance.selectedItemDescription.text = item.itemInfo.description;
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -74,7 +74,7 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         if (item != null)
         {
-            if (item._name.Equals(obj.itemInfo._name))
+            if (item.itemInfo._name.Equals(obj.itemInfo._name))
             {
                 amount++;
                 return true;
@@ -85,8 +85,8 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             }
         }
 
-        item = obj.itemInfo;
-        Icon.sprite = item.Icon;
+        item = obj;
+        Icon.sprite = item.itemInfo.Icon;
         color.a = 100;
         Icon.color = color;
 
@@ -112,9 +112,14 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         if (item == null) return;
         amount--;
+        CharacterManager.Instance.Condition.Buff(item.itemInfo, item.itemInfo.type);
         if (amount == 0)
         {
             ResetSlot();
+        }
+        else
+        {
+            amountTxt.text = amount.ToString();
         }
     }
 

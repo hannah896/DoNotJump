@@ -26,8 +26,6 @@ public class InventoryManager : MonoBehaviour
     {
         if (itemSlot == null) itemSlot = (ItemSlot)AssetDatabase.LoadAssetAtPath("Assets/03.Prefabs/Inventory/Slot.prefab", typeof(ItemSlot));
         if (Slots == null) Slots = transform.Find("Slots");
-        if (selectedItemName = null) selectedItemName = Utility.FindComponent<TextMeshProUGUI>(transform.Find("ItemInfo").gameObject, "name");
-        if (selectedItemDescription == null) selectedItemDescription = Utility.FindComponent<TextMeshProUGUI>(transform.Find("ItemInfo").gameObject, "info");
     }
 
     private void Awake()

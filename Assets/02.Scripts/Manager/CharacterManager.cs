@@ -56,4 +56,31 @@ public class CharacterManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    public void Active(ItemType type)
+    {
+        switch (type) 
+        {
+            case ItemType.Choco:
+                Choco.SetActive(true);
+                break;
+            case ItemType.Straw:
+                Straw.SetActive(true);
+                break;
+        }
+    }
+
+    public void NoActive(ItemType type)
+    {
+        switch (type)
+        {
+            case ItemType.Choco:
+                Choco.SetActive(false);
+                break;
+            case ItemType.Straw:
+                Straw.SetActive(false);
+                break;
+        }
+    }
+
 }

@@ -356,13 +356,13 @@ public class PlayerController : MonoBehaviour
     //효과적용
     public void Use()
     {
-        item.Buff();
+        condition.Buff(item.itemInfo, item.itemInfo.type);
     }
 
     //아이템 사라지게하는 처리
     private void Disappear()
     {
-        Destroy(item.gameObject);
+        item.gameObject.SetActive(false);
         item = null;
         manager.isInteract = false;
     }
@@ -388,11 +388,9 @@ public class PlayerController : MonoBehaviour
     //아이템 줍기
     public void OnPick(InputAction.CallbackContext context)
     {
-        Debug.Log("아이템 주울까");
         if (context.phase == InputActionPhase.Started)
         {
             if (!manager.isInteract) return;
-            Debug.Log("아이템 줍는중");
             InventoryManager.Instance.Input(item);
             Disappear();
         }
@@ -454,7 +452,7 @@ public class PlayerController : MonoBehaviour
         Gizmos.DrawLine(drawingRay.origin, drawingRay.origin + drawingRay.direction * 10f);
     }
 
-    //아래로 내려주는 거
+    //아래로 가속도 내려주는 거
     IEnumerator PushDown()
     {
         while (true)
