@@ -24,10 +24,10 @@ public class InventoryManager : MonoBehaviour
 
     private void OnValidate()
     {
-        itemSlot = (ItemSlot)AssetDatabase.LoadAssetAtPath("Assets/03.Prefabs/Inventory/Slot.prefab", typeof(ItemSlot));
-        Slots = transform.Find("Slots");
-        selectedItemName = Utility.FindComponent<TextMeshProUGUI>(transform.Find("ItemInfo").gameObject, "name");
-        selectedItemDescription = Utility.FindComponent<TextMeshProUGUI>(transform.Find("ItemInfo").gameObject, "info");
+        if (itemSlot == null) itemSlot = (ItemSlot)AssetDatabase.LoadAssetAtPath("Assets/03.Prefabs/Inventory/Slot.prefab", typeof(ItemSlot));
+        if (Slots == null) Slots = transform.Find("Slots");
+        if (selectedItemName = null) selectedItemName = Utility.FindComponent<TextMeshProUGUI>(transform.Find("ItemInfo").gameObject, "name");
+        if (selectedItemDescription == null) selectedItemDescription = Utility.FindComponent<TextMeshProUGUI>(transform.Find("ItemInfo").gameObject, "info");
     }
 
     private void Awake()

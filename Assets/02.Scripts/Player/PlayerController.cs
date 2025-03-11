@@ -5,105 +5,130 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using VInspector;
+using static UnityEngine.Rendering.DebugUI;
 
 public class PlayerController : MonoBehaviour
 {
-    #region 움직임관련
-    [Foldout("MoveInfo"), ShowInInspector]
-    //[Header("MoveInfo")]
-    public float jumpPower;
-    public float moveSpeed;
-    public float defaultSpeed;
-    public float runSpeed;
+    #region 스크립트 내 사용 컴포넌트
+    [Header("ComponentInfo"), ShowInInspector, ReadOnly]
+    private Rigidbody _rigidbody; //물리 관련 사용
+    
     [ShowInInspector, ReadOnly]
-    private Vector2 moveInput;
+    private Player _player; // 현재 플레이어의 대쉬 스텟상태 체크시 호출
+    
     [ShowInInspector, ReadOnly]
-    private Vector2 mouseDelta;
-    public LayerMask groundLayer;
-
+    private CharacterManager manager; //현재 거의 게임매니저 급의 중요한 컴포넌트임.그러나 참조시에 일일이 Instance붙이기 귀찮아서 단순화를 위해 사용
+    
+    [ShowInInspector, ReadOnly]
+    private PlayerCondition condition; //플레이어의 상태를 변화시켜줄 때(아이템 사용과 같이) 사용되는 컴포넌트
     #endregion
 
-    #region 시야정보
-    [Foldout("LookInfo"), ShowInInspector]
-    //[Header("LookInfo")]
-    public Camera playerCam;
-    [ShowInInspector]
-    private float CamSensitivity = 0.1f; //민감도가 낮을수록 무빙이 느려짐
+    #region 움직임(걷기/뛰기)
+    [Header("Camera"), ShowInInspector, ReadOnly]
+    public float moveSpeed; //걷기 속도
+    
+    [ShowInInspector, ReadOnly]
+    private Vector2 moveInput; //어느 방향으로 갈건지 입력을 저장하기 위한 방향 인풋벡터
+    
+    [ShowInInspector, ReadOnly]
+    public float defaultSpeed; //걷기의 속도
+    
+    [ShowInInspector, ReadOnly]
+    public float runSpeed; //달리기의 속도
+    #endregion
+
+    #region 점프
+    [Header("Jump"), ShowInInspector, ReadOnly]
+    public LayerMask groundLayer; //땅으로 판정할 레이어 설정
+    
+    [ShowInInspector, ReadOnly]
+    public float jumpPower; //점프력
+    #endregion
+
+    #region 카메라 회전
+    [Header("Camera"), ShowInInspector, ReadOnly]
+    public Transform target; //중심점이 될 타겟, 근데 플레이어라 삭제할 수도 있음 **
+    
+    public Camera playerCam; //메인 카메라
+    
+    [ShowInInspector, ReadOnly] 
+    private Vector2 mouseDelta; //delta동안 마우스움직임 변화량
+    
+    public float r; //원형으로 돌게될건데 그 원의 반지름
+    
+    public float speed = 35f; //1초에 몇 도를 돌건지의 속도
+    
+    [ShowInInspector, ReadOnly] 
+    private float playerCameraAngle; //현재 카메라의 각도
+    
+    [ShowInInspector, ReadOnly] 
+    private float isRot; //카메라회전의 값을 현재 value로 받고있어서(카메라가 도는 방향에 따라 +, - 로 조절하기 위해)
+
+    [ShowInInspector, ReadOnly]
+    public Coroutine FastDown; //속도가 0이 되었을때 물리적으로 내려주는 코루틴 땅에 떨어지면 그라운드에서 스탑해줌
+    #endregion
+
+    //CameraLook작동 확인후 작동하지않으면 삭제 예정 **
+    #region 시야 회전 관련
+    [Header("Look")] 
+    private Transform cameraContainer; 
+    // TODO: 애트리부트 게이지바 추가하기
+    [ShowInInspector, Range(0.1f, 1f)]
+    private float camSensitivity; //민감도가 낮을수록 무빙이 느려짐
+    
     [ShowInInspector, ReadOnly]
     private float camRotX;
+    
     [ShowInInspector, ReadOnly]
     private float camRotY;
+    
     [ShowInInspector, ReadOnly]
     private float minXLook;
+    
     [ShowInInspector, ReadOnly]
     private float maxXLook;
-    
-    public LayerMask InteractableLayer;
-    Quaternion targetRot;
+
     #endregion
 
-    #region 물리정보
-    [Foldout("PhysicsInfo"), ShowInInspector]
-    //[Header("PhysicsInfo")]
-    public AnimationState playerState;
-    public Vector3 playerVelocity;
-    [ShowInInspector]
-    private Vector3 originGravity;
-    [ShowInInspector]
-    private Vector3 jumpGravity;
-    public float gravity;
+    #region 상호작용
+    [Header("Interact")]
+    public ItemObject item; //현재 상호작용중인 아이템 오브젝트(인벤토리에 넣을 수 있는 아이템), 다른 스크립트에서 접근하기 위해 사용
+    public LayerMask InteractableLayer; //상호작용 오브젝트 찾는 레이어 마스크
+    [ShowInInspector, ReadOnly] 
+    private Vector2 mousePos; //마우스 위치값(x, y), 카메라 기준으로 마우스의 위치를 월드 좌표로 바꾸어 카메라위치에서 해당위치로 레이를 쏠 예정
+    Ray drawingRay;
     #endregion
 
-    #region 레이정보
-    [Foldout("RayInfo"), ShowInInspector]
-    //[Header("RayInfo")]
-    private Vector2 mousePos;
-    [ShowInInspector]
-    private Ray drawingRay;
-    public ItemObject item;
+    #region 인벤토리
+    [Header("Inventory"), ShowInInspector, ReadOnly]
+    private GameObject Inventory; //인벤토리 validate에서 연결하기
     #endregion
-
-    #region 잡다한거
-    [Foldout("Anything")]
-    private Rigidbody _rigidbody;
-    [ShowInInspector, ReadOnly]
-    private Player _player;
-    [ShowInInspector, ReadOnly]
-    private Collider _collider;
-    [ShowInInspector, ReadOnly]
-    private CharacterManager manager;
-    [ShowInInspector, ReadOnly]
-    private PlayerCondition condition;
-    private Transform cameraContainer;
-    [ShowInInspector, ReadOnly]
-    private GameObject Inventory;
-    #endregion
-
-    [Header("Camera"), ShowInInspector, ReadOnly]
-    public Transform target;
-    public float r;
-    public float speed = 35f;
-    private float playerCameraAngle;
-    private float CamDir;
-    private float isRot;
-
-    [ShowInInspector, ReadOnly]
 
     private void OnValidate()        
     {
-        _rigidbody = GetComponent<Rigidbody>();
-        _collider = GetComponent<Collider>();
-        _player = GetComponent<Player>();
-        condition = GetComponent <PlayerCondition>();
-        cameraContainer = playerCam.transform.parent;
+        //component
+        if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody>();
+        if (_player == null) _player = GetComponent<Player>();
+        if (condition == null) condition = GetComponent<PlayerCondition>();
+        
+        //camera
+        if (playerCam == null) playerCam = Camera.main;
+        camSensitivity = 0.15f;
+
+        //look
+        if (playerCam != null) cameraContainer = playerCam.transform.parent;
         minXLook = -45f;
         maxXLook = 45f;
-        jumpPower = 1f;
-        originGravity = new Vector3(0, -9.8f, 0);
 
+        //jump
+        jumpPower = 1f;
+        
+        //run
         defaultSpeed = 1f;
         runSpeed = 3f;
-        Inventory = FindObjectOfType<InventoryManager>().gameObject;
+
+        //inventory
+        if (Inventory == null) Inventory = FindObjectOfType<InventoryManager>().gameObject;
     }
 
     private void Awake()
@@ -116,14 +141,6 @@ public class PlayerController : MonoBehaviour
     {
         manager = CharacterManager.Instance;
     }
-
-    //속도, 상태, 중력값 계산
-    private void Update()
-    {
-        playerState = manager.state;
-        playerVelocity = _rigidbody.velocity;
-        gravity = Physics.gravity.y;
-    }
     
     //물리 계산
     private void FixedUpdate()
@@ -132,7 +149,7 @@ public class PlayerController : MonoBehaviour
         if (IsGround())
         {
             //플레이어의 속도가 
-            if (Mathf.Approximately(_rigidbody.velocity.x, 0f) || Mathf.Approximately(_rigidbody.velocity.z, 0f))
+            if (Mathf.Approximately(_rigidbody.velocity.x, 0f) && Mathf.Approximately(_rigidbody.velocity.z, 0f))
             {
                 manager.state = AnimationState.Idle;
             }
@@ -147,23 +164,24 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+
+
     
     //카메라 계산
     private void LateUpdate()
     {
-        CameraLook();
-
-        playerCameraAngle += Time.deltaTime * 50 * isRot;
-
+        playerCameraAngle += Time.deltaTime * speed * isRot;
         GetAngle();
+        CameraLook();
     }
 
+    //카메라 회전 
     private void GetAngle()
     {
         playerCameraAngle = playerCameraAngle % 360;
         Quaternion rotation = Quaternion.AngleAxis(playerCameraAngle, Vector3.up);
         Vector3 direction = rotation * Vector3.forward;
-        Vector3 result = direction * 2 + Vector3.up * 1;
+        Vector3 result = direction * r + Vector3.up * 1;
         Vector3 cameraPosition = transform.position + result;
         playerCam.transform.position = cameraPosition;
 
@@ -205,7 +223,7 @@ public class PlayerController : MonoBehaviour
     public void Jump(float jumpPower)
     {
         _rigidbody.AddForce(jumpPower * Vector3.up, ForceMode.Impulse);
-        StartCoroutine(PushDown());
+        FastDown = StartCoroutine(PushDown());
     }
 
     // 슈퍼 점프
@@ -233,6 +251,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    //땅인지 체크함
     bool IsGround()
     {
         Ray[] rays = new Ray[4]
@@ -248,10 +267,15 @@ public class PlayerController : MonoBehaviour
             if(Physics.Raycast(rays[i], 0.05f, groundLayer))
             {
                 manager.state = AnimationState.Idle;
+                if (FastDown != null)
+                {
+                    StopCoroutine(FastDown);
+                    FastDown = null;
+                }
                 return true;
             }
         }
-        Physics.gravity = originGravity;
+        
         manager.state = AnimationState.Jump;
         
         return false;
@@ -259,12 +283,14 @@ public class PlayerController : MonoBehaviour
 
     void CameraLook()
     {
-        //카메라를 커서의 x만큼 회전시킨다.
-        camRotX += mouseDelta.y * CamSensitivity; //y축을 회전해야 x가 회전함
+        // 카메라를 y축으로 회전시켜서 상하 회전 처리
+        camRotX += mouseDelta.y * camSensitivity; // y축을 회전해야 x가 회전함
         camRotX = Mathf.Clamp(camRotX, minXLook, maxXLook);
-        cameraContainer.eulerAngles = new Vector3(-camRotX, 0, 0);
+        cameraContainer.localRotation = Quaternion.Euler(-camRotX, 0, 0); // 카메라는 X축만 회전
 
-        transform.eulerAngles += new Vector3(0, mouseDelta.x * CamSensitivity); //x축을 회전해야 y가 회전함
+        // 캐릭터를 y축으로 회전시켜서 좌우 회전 처리
+        float targetYRotation = mouseDelta.x * camSensitivity;
+        transform.Rotate(Vector3.up * targetYRotation); // 캐릭터는 Y축을 기준으로 회전
     }
 
     public void OnCameraRot(InputAction.CallbackContext context)
@@ -378,7 +404,7 @@ public class PlayerController : MonoBehaviour
         if (_player.Dash < 3f)
         {
             Debug.Log("나 파업. 못뛰어");
-
+            moveSpeed = defaultSpeed;
             return;
         }
         else
@@ -406,6 +432,7 @@ public class PlayerController : MonoBehaviour
             moveSpeed = defaultSpeed;
         }
     }
+
     //레이 시각화
     private void OnDrawGizmos()
     {
@@ -428,7 +455,6 @@ public class PlayerController : MonoBehaviour
     }
 
     //아래로 내려주는 거
-    // TODO : 코루틴을 변수로 관리
     IEnumerator PushDown()
     {
         while (true)
@@ -437,8 +463,8 @@ public class PlayerController : MonoBehaviour
             {
                 _rigidbody.velocity =  new Vector3(0, 1.1f * _rigidbody.velocity.y, 0);
                 Debug.Log("내려드렸습니다");
-                yield return null;
             }
+            yield return null;
         }
     }
 }

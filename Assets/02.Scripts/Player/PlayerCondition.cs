@@ -9,7 +9,6 @@ public class PlayerCondition : MonoBehaviour
     private Player player;
     Coroutine curCoroutin;
     
-
     private void Start()
     {
         player = CharacterManager.Instance.Player;
