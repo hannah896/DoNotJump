@@ -26,7 +26,6 @@ public class PlayerController : MonoBehaviour
     #region 시야정보
     [Foldout("LookInfo"), ShowInInspector]
     //[Header("LookInfo")]
-    public Transform cameraContainer;
     public Camera playerCam;
     [ShowInInspector]
     private float CamSensitivity = 0.1f; //민감도가 낮을수록 무빙이 느려짐
@@ -75,17 +74,18 @@ public class PlayerController : MonoBehaviour
     private CharacterManager manager;
     [ShowInInspector, ReadOnly]
     private PlayerCondition condition;
+    private Transform cameraContainer;
     [ShowInInspector, ReadOnly]
     private GameObject Inventory;
     #endregion
 
-    [Header("CameraRot"), ShowInInspector, ReadOnly]
+    [Header("Camera"), ShowInInspector, ReadOnly]
     public Transform target;
     public float r;
     public float speed = 35f;
     private float playerCameraAngle;
     private float CamDir;
-    private bool isRot;
+    private float isRot;
 
     [ShowInInspector, ReadOnly]
 
@@ -100,7 +100,7 @@ public class PlayerController : MonoBehaviour
         maxXLook = 45f;
         jumpPower = 1f;
         originGravity = new Vector3(0, -9.8f, 0);
-        jumpGravity = originGravity * jumpPower;
+
         defaultSpeed = 1f;
         runSpeed = 3f;
         Inventory = FindObjectOfType<InventoryManager>().gameObject;
@@ -117,13 +117,15 @@ public class PlayerController : MonoBehaviour
         manager = CharacterManager.Instance;
     }
 
+    //속도, 상태, 중력값 계산
     private void Update()
     {
         playerState = manager.state;
         playerVelocity = _rigidbody.velocity;
         gravity = Physics.gravity.y;
     }
-
+    
+    //물리 계산
     private void FixedUpdate()
     {
         Move();
@@ -145,18 +147,14 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-
+    
+    //카메라 계산
     private void LateUpdate()
     {
         CameraLook();
-        if (Input.GetKey(KeyCode.Q))
-        {
-            playerCameraAngle += Time.deltaTime * 50;
-        }
-        else if (Input.GetKey(KeyCode.E))
-        {
-            playerCameraAngle -= Time.deltaTime * 50;
-        }
+
+        playerCameraAngle += Time.deltaTime * 50 * isRot;
+
         GetAngle();
     }
 
@@ -214,6 +212,7 @@ public class PlayerController : MonoBehaviour
     private void SuperJump()
     {
         _rigidbody.AddForce(10 * jumpPower * Vector3.up, ForceMode.Impulse);
+        StartCoroutine(PushDown());
     }
 
     //점프 입력을 받아오는 역할
@@ -268,35 +267,16 @@ public class PlayerController : MonoBehaviour
         transform.eulerAngles += new Vector3(0, mouseDelta.x * CamSensitivity); //x축을 회전해야 y가 회전함
     }
 
-    //원형카메라 회전
-    void CameraRot()
-    {
-        //360도  ssssss
-        playerCameraAngle %= 360;
-        Quaternion rotation = Quaternion.AngleAxis(playerCameraAngle, Vector3.up);
-        //현재 기준축은 z임
-        Vector3 dir = rotation * Vector3.forward;
-        Vector3 result = dir * r + Vector3.up * playerCam.transform.position.y;
-        Vector3 cameraPosition = transform.position + result;
-        playerCam.transform.LookAt(transform);
-
-        Vector3 euler = playerCam.transform.eulerAngles;
-        euler.x -= 20f; // 원하는 만큼 X축 회전 감소 = 카메라 각도조절
-        playerCam.transform.rotation = Quaternion.Euler(euler);
-    }
-
     public void OnCameraRot(InputAction.CallbackContext context)
     {
         if (context.phase == InputActionPhase.Performed)
         {
-            isRot = true;
-            Debug.Log("빙빙 돌아가는 회전목마처럼");
-            playerCameraAngle *= context.ReadValue<float>();
-            
+            Debug.Log(context.ReadValue<float>());
+            isRot = context.ReadValue<float>();
         }
-        else if(context.phase == InputActionPhase.Canceled)
+        else
         {
-            isRot = false;
+            isRot = 0f;
         }
     }
 
@@ -448,17 +428,17 @@ public class PlayerController : MonoBehaviour
     }
 
     //아래로 내려주는 거
+    // TODO : 코루틴을 변수로 관리
     IEnumerator PushDown()
     {
-        if (_rigidbody.velocity.y < 0.19f)
+        while (true)
         {
-            Physics.gravity = jumpGravity;
-            Debug.Log("내려드렸습니다");
-            yield break;
-        }
-        else
-        {
-            yield return null;
+            if (_rigidbody.velocity.y < -0.1f)
+            {
+                _rigidbody.velocity =  new Vector3(0, 1.1f * _rigidbody.velocity.y, 0);
+                Debug.Log("내려드렸습니다");
+                yield return null;
+            }
         }
     }
 }
