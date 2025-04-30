@@ -13,6 +13,9 @@ D: 오른쪽 (Right)
 
 Q: 카메라를 왼쪽으로 회전 (Rotate Left)
 E: 카메라를 오른쪽으로 회전 (Rotate Right)
+I: 인벤토리 오픈
+G: 획득
+X: 즉시사용+
 점프
 
 Space: 첫 번째 점프 (Jump 1)
